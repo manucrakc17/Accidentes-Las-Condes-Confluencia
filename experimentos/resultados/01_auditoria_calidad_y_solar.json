@@ -1,0 +1,75 @@
+{
+  "n_registros": 676,
+  "rango_fechas": [
+    "2025-01-02",
+    "2025-12-29"
+  ],
+  "correccion_solar": {
+    "mae_original_vs_real_grados": 60.24,
+    "mae_original_vs_simulacion_mas12h_grados": 0.09,
+    "distribucion_original": {
+      "dia": 163,
+      "crepusculo": 44,
+      "noche": 83,
+      "noche_cerrada": 386
+    },
+    "distribucion_corregida": {
+      "dia": 511,
+      "crepusculo": 31,
+      "noche": 48,
+      "noche_cerrada": 86
+    },
+    "pct_noche_original": 69.38,
+    "pct_noche_corregido": 24.41,
+    "siniestros_en_ventana_encandilamiento_solar_0_15_grados": 106,
+    "atropellos_dia_corregido": 32,
+    "atropellos_total": 42
+  },
+  "auditoria_posicional": {
+    "registros_dentro_bbox_las_condes": 675,
+    "pct_dentro_bbox_las_condes": 99.85,
+    "n_siniestros_en_intersecciones_repetidas_evaluados": 279,
+    "mediana_dispersion_misma_interseccion_m": 0.0,
+    "pct_misma_interseccion_dentro_100m": 100.0,
+    "distribucion_tipo_ubicacion_vial": {
+      "CRUCE_SEMAFORIZADO": 476,
+      "CRUCE_PRIORIDAD_SENAL": 81,
+      "TRAMO_RECTO": 73,
+      "OTROS": 27,
+      "CRUCE_SEMAFORO_APAGADO": 8,
+      "ROTONDA_O_ENLACE": 7,
+      "INFRAESTRUCTURA_PEATON_CICLO": 4
+    }
+  },
+  "recalibracion_variables": {
+    "viento_cat_original": {
+      "calma": 676
+    },
+    "viento_cat_corregida": {
+      "brisa_leve": 203,
+      "brisa_moderada": 189,
+      "viento_fuerte_o_rafaga": 164,
+      "calma_real": 120
+    },
+    "causa_nuev_original": {
+      "DISTRACCION DEL CONDUCTOR": 586,
+      "IMPRUDENCIA DEL CONDUCTOR": 57,
+      "DESOBEDIENCIA A SEÑALIZACION": 7,
+      "ALCOHOL EN CONDUCTOR": 7,
+      "IMPRUDENCIA DEL PEATON": 6,
+      "VELOCIDAD IMPRUDENTE": 5,
+      "FALLAS MECANICAS": 5,
+      "OTRAS CAUSAS": 2,
+      "DEFICIENCIAS VIALES": 1
+    },
+    "causa_especifica_desagregada": {
+      "NO_ATENTO_CONDICIONES_TRANSITO": 586,
+      "MANIOBRA_PISTA_ADELANTAMIENTO_VIRAJE": 36,
+      "VELOCIDAD_O_DISTANCIA_SEGUIMIENTO": 17,
+      "VIOLACION_SEMAFORO_O_PREFERENCIA": 15,
+      "FALLA_MECANICA_U_OTRA": 9,
+      "ALCOHOL_EN_CONDUCTOR": 7,
+      "FACTOR_PEATON_O_PASAJERO": 6
+    }
+  }
+}

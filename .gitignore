@@ -1,0 +1,21 @@
+# Archivos temporales y de sistema
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# Archivos ocultos de macOS / Windows
+._*
+.DS_Store
+Thumbs.db
+
+# Variables de entorno y credenciales (Prohibido subir según Clase 7)
+.env
+*.pem
+*.key
+credentials.json
+secrets/

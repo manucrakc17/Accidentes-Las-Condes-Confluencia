@@ -1,0 +1,46 @@
+name: accidentes-las-condes-confluencia
+
+services:
+  desarrollo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: las-condes-siniestros:clase7
+    container_name: lc-desarrollo
+    working_dir: /workspace
+    volumes:
+      - ./datos:/workspace/datos:ro
+      - ./desarrollo:/workspace/desarrollo:rw
+      - ./docs:/workspace/docs:ro
+    command: ["sleep", "infinity"]
+    security_opt:
+      - no-new-privileges:true
+
+  experimentacion:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: las-condes-siniestros:clase7
+    container_name: lc-experimentacion
+    working_dir: /workspace
+    volumes:
+      - ./datos:/workspace/datos:ro
+      - ./desarrollo:/workspace/desarrollo:ro
+      - ./experimentos/resultados:/workspace/experimentos/resultados:rw
+    command: ["python", "desarrollo/run_all.py"]
+    security_opt:
+      - no-new-privileges:true
+
+  auditoria:
+    image: las-condes-siniestros:clase7
+    container_name: lc-auditoria
+    working_dir: /workspace
+    volumes:
+      - ./datos:/workspace/datos:ro
+      - ./docs:/workspace/docs:ro
+      - ./desarrollo:/workspace/desarrollo:ro
+      - ./experimentos/resultados:/workspace/experimentos/resultados:ro
+      - ./auditoria:/workspace/auditoria:rw
+    command: ["sleep", "infinity"]
+    security_opt:
+      - no-new-privileges:true
