@@ -1,497 +1,354 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-03_puntos_calientes_y_mitigacion.py
-===================================
-Paso 3 del pipeline de experimentación en contenedor (Clase 7):
-1. Carga `experimentos/resultados/SINIESTROS_LAS_CONDES_CORREGIDO.csv`.
-2. Ejecuta detección de puntos calientes (hotspots) mediante dos enfoques metodológicamente
-   explícitos que responden a las objeciones #2 y #6 del Critic:
-   a) Estadístico espacial local Getis-Ord Gi* sobre unidades discretas de grilla métrica
-      (celdas de 250 m x 250 m con matriz de pesos espaciales de vecindad d <= 400 m),
-      evaluando por separado:
-      - Gi* de Concentración de Ocurrencia (conteo de siniestros)
-      - Gi* de Severidad Equivalente Acumulada (EPDO)
-      - Gi* de Severidad Intrínseca Media (EPDO medio por siniestro en celdas con n >= 3),
-        desacoplando el volumen de tráfico arterial de la gravedad intrínseca del punto.
-   b) Clustering espacial DBSCAN con métrica Haversine exacta (eps = 150 m, min_samples = 5)
-      para identificar intersecciones y micro-corredores críticos.
-3. Caracteriza los ejes viales e intersecciones de mayor concentración y severidad.
-4. Construye la Matriz de Medidas de Mitigación Basadas en Evidencia (`03_matriz_mitigacion_evidencia.csv`),
-   vinculando cada correlación estadística y cluster espacial con intervenciones de ingeniería de tránsito,
-   gestión de velocidad/semáforos, protección de usuarios vulnerables y respuesta ante pavimento húmedo.
-"""
+"""Exploración de concentraciones espaciales de los siniestros registrados."""
 
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
-from typing import Dict, Any, List
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy import stats
+from pyproj import Transformer
+from scipy.sparse import csr_matrix
+from scipy.spatial.distance import cdist
+from scipy.stats import norm
 from sklearn.cluster import DBSCAN
-import matplotlib.pyplot as plt
+from sklearn.metrics.pairwise import haversine_distances
+from statsmodels.stats.multitest import multipletests
+
+from mitigacion import construir_matriz
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT_DIR / "experimentos" / "resultados"
-IN_CSV = OUT_DIR / "SINIESTROS_LAS_CONDES_CORREGIDO.csv"
+IN_CSV = ROOT_DIR / "experimentos" / "privado" / "SINIESTROS_LAS_CONDES_CORREGIDO.csv"
 
 EARTH_RADIUS_M = 6371000.0
+CRS_UTM = "EPSG:32719"
+CELL_SIZE_M = 250
+DISTANCE_M = 400
+N_PERMUTATIONS = 19_999
+PERMUTATION_SEED = 681_221
+ALPHA = 0.05
+DBSCAN_METERS = 150
+MIN_SAMPLES = 5
+MIN_PUBLIC_COUNT = 5
 
 
-def latlon_to_local_xy_m(lat: np.ndarray, lon: np.ndarray, lat0: float, lon0: float) -> Tuple[np.ndarray, np.ndarray]:
-    """Proyección equirectangular local en metros centrada en (lat0, lon0)."""
-    y_m = (lat - lat0) * 111320.0
-    x_m = (lon - lon0) * 111320.0 * math.cos(math.radians(lat0))
-    return x_m, y_m
-
-
-def compute_getis_ord_gi_star(values: np.ndarray, coords_xy: np.ndarray, d_thresh_m: float = 400.0) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Calcula el estadístico espacial local Getis-Ord Gi* (Ord & Getis, 1995) con pesos binarios
-    incluyendo la propia celda (w_ii = 1) para distancia euclidiana <= d_thresh_m.
-    Retorna (z_scores, p_values_two_tailed).
-    """
+def compute_getis_ord_gi_star(
+    values: np.ndarray, adjacency: csr_matrix, *, n_permutations: int = N_PERMUTATIONS
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Gi* bilateral para vecindad binaria, con auto-vecindad y permutación global."""
     n = len(values)
-    x = values.astype(float)
-    x_bar = np.mean(x)
-    s = np.sqrt(np.sum((x - x_bar) ** 2) / n)
-    if s == 0 or n <= 2:
-        return np.zeros(n), np.ones(n)
+    if n <= 2 or np.std(values) == 0 or np.all(adjacency.getnnz(axis=1) == n):
+        return np.zeros(n), np.ones(n), np.ones(n)
 
-    # Matriz de distancias entre centroides de celdas
-    dx = coords_xy[:, 0][:, None] - coords_xy[:, 0][None, :]
-    dy = coords_xy[:, 1][:, None] - coords_xy[:, 1][None, :]
-    dist_mat = np.hypot(dx, dy)
-    W = (dist_mat <= d_thresh_m).astype(float)
+    neighbors = adjacency.getnnz(axis=1)
+    centered = values - values.mean()
+    observed = adjacency @ centered
+    denom = np.std(values) * np.sqrt(neighbors * (n - neighbors) / (n - 1))
+    z = np.divide(observed, denom, out=np.zeros(n), where=denom > 0)
+    p_analytic = 2 * norm.sf(np.abs(z))
 
-    sum_w = W.sum(axis=1)
-    sum_w2 = (W ** 2).sum(axis=1)
-    wx = W @ x
-
-    numer = wx - x_bar * sum_w
-    denom = s * np.sqrt((n * sum_w2 - (sum_w ** 2)) / (n - 1.0))
-    z_scores = np.where(denom > 0, numer / denom, 0.0)
-    p_vals = 2.0 * (1.0 - stats.norm.cdf(np.abs(z_scores)))
-    return z_scores, p_vals
-
-
-def main() -> Dict[str, Any]:
-    df = pd.read_csv(IN_CSV)
-
-    lat0 = float(df["Latitud"].mean())
-    lon0 = float(df["longitud"].mean())
-    x_m, y_m = latlon_to_local_xy_m(df["Latitud"].values, df["longitud"].values, lat0, lon0)
-    df["x_local_m"] = np.round(x_m, 1)
-    df["y_local_m"] = np.round(y_m, 1)
-
-    # 1. Clustering espacial DBSCAN (Haversine, eps = 150 m, min_samples = 5)
-    coords_rad = np.radians(df[["Latitud", "longitud"]].values)
-    eps_rad = 150.0 / EARTH_RADIUS_M
-    db = DBSCAN(eps=eps_rad, min_samples=5, metric="haversine").fit(coords_rad)
-    df["cluster_dbscan"] = db.labels_
-
-    cluster_rows: List[Dict[str, Any]] = []
-    for cid, grp in df[df["cluster_dbscan"] >= 0].groupby("cluster_dbscan"):
-        c1_top = grp["Calle_Uno_norm"].value_counts().index[0]
-        nodo_top = grp["nodo_vial"].value_counts().index[0]
-        tipo_top = grp["TIPO_SINIE"].value_counts().index[0]
-        cluster_rows.append(
-            {
-                "cluster_id": int(cid),
-                "nombre_referencia": f"Cluster {int(cid)}: {nodo_top}",
-                "eje_principal": c1_top,
-                "interseccion_dominante": nodo_top,
-                "n_siniestros": int(len(grp)),
-                "lat_centroide": round(float(grp["Latitud"].mean()), 6),
-                "lon_centroide": round(float(grp["longitud"].mean()), 6),
-                "altitud_media_m": round(float(grp["altitud_m"].mean()), 1),
-                "epdo_total": int(grp["indice_epdo"].sum()),
-                "epdo_medio": round(float(grp["indice_epdo"].mean()), 2),
-                "fallecidos": int(grp["FALLECIDOS"].sum()),
-                "graves": int(grp["GRAVES"].sum()),
-                "total_lesionados": int(grp["TOTAL_LESI"].sum()),
-                "pct_con_lesionados": round(float(grp["con_lesionados"].mean() * 100.0), 1),
-                "pct_grave_o_fatal": round(float(grp["grave_o_fatal"].mean() * 100.0), 1),
-                "n_motocicletas": int(grp["Motociclet"].sum()),
-                "n_atropellos": int(grp["Atropello"].sum()),
-                "n_bicicletas": int(grp["Bicicleta"].sum()),
-                "pct_usuarios_vulnerables": round(float(grp["usuario_vulnerable"].mean() * 100.0), 1),
-                "pct_noche_corr": round(float(grp["noche_corr"].mean() * 100.0), 1),
-                "pct_pavimento_adverso": round(float(grp["pavimento_adverso"].mean() * 100.0), 1),
-                "pct_hora_punta": round(float(grp["en_hora_punta"].mean() * 100.0), 1),
-                "tipologia_dominante": tipo_top,
-            }
+    rng = np.random.default_rng(PERMUTATION_SEED)
+    extreme = np.zeros(n, dtype=int)
+    # Agrupar permutaciones limita la memoria sin construir una matriz densa de pesos.
+    for offset in range(0, n_permutations, 500):
+        permutations = np.stack(
+            [rng.permutation(centered) for _ in range(min(500, n_permutations - offset))], axis=1,
         )
+        extreme += (np.abs(adjacency @ permutations) >= np.abs(observed[:, None]) - 1e-10).sum(axis=1)
+    p_permutation = (extreme + 1) / (n_permutations + 1)
+    p_permutation[denom == 0] = 1
+    return z, p_analytic, p_permutation
 
-    clusters_df = pd.DataFrame(cluster_rows).sort_values(["epdo_total", "n_siniestros"], ascending=False).reset_index(drop=True)
-    clusters_df["ranking_severidad_epdo"] = np.arange(1, len(clusters_df) + 1)
-    clusters_csv = OUT_DIR / "03_hotspots_dbscan.csv"
-    clusters_df.to_csv(clusters_csv, index=False, encoding="utf-8")
 
-    # 2. Grilla Espacial de 250 m x 250 m y Estadístico Local Getis-Ord Gi*
-    cell_size = 250.0
-    df["grid_ix"] = np.floor(df["x_local_m"] / cell_size).astype(int)
-    df["grid_iy"] = np.floor(df["y_local_m"] / cell_size).astype(int)
+def grid_indices(easting: np.ndarray, northing: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    return np.floor(easting / CELL_SIZE_M).astype(int), np.floor(northing / CELL_SIZE_M).astype(int)
 
-    grid_df = (
+
+def statistics_for_grid(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+    grid = (
         df.groupby(["grid_ix", "grid_iy"])
         .agg(
-            n_siniestros=("ID", "count"),
+            n_siniestros=("ID", "size"),
             epdo_total=("indice_epdo", "sum"),
             epdo_medio=("indice_epdo", "mean"),
+            puntaje_conaset_total=("puntaje_conaset", "sum"),
             lesionados_total=("TOTAL_LESI", "sum"),
             graves_o_fatales=("grave_o_fatal", "sum"),
             vulnerables=("usuario_vulnerable", "sum"),
-            lat_media=("Latitud", "mean"),
-            lon_media=("longitud", "mean"),
-            x_centro_m=("x_local_m", "mean"),
-            y_centro_m=("y_local_m", "mean"),
-            eje_frecuente=("Calle_Uno_norm", lambda s: s.value_counts().index[0]),
         )
         .reset_index()
     )
+    grid["x_centro_m"] = (grid["grid_ix"] + .5) * CELL_SIZE_M
+    grid["y_centro_m"] = (grid["grid_iy"] + .5) * CELL_SIZE_M
+    centers = grid[["x_centro_m", "y_centro_m"]].to_numpy()
+    adjacency = csr_matrix(cdist(centers, centers) <= DISTANCE_M, dtype=float)
 
-    coords_grid = grid_df[["x_centro_m", "y_centro_m"]].values
-    z_cnt, p_cnt = compute_getis_ord_gi_star(grid_df["n_siniestros"].values, coords_grid, d_thresh_m=400.0)
-    z_epdo, p_epdo = compute_getis_ord_gi_star(grid_df["epdo_total"].values, coords_grid, d_thresh_m=400.0)
-
-    grid_df["gi_z_conteo"] = np.round(z_cnt, 3)
-    grid_df["gi_p_conteo"] = np.round(p_cnt, 5)
-    grid_df["gi_z_epdo"] = np.round(z_epdo, 3)
-    grid_df["gi_p_epdo"] = np.round(p_epdo, 5)
-
-    def classify_hotspot(z: float, p: float) -> str:
-        if z >= 2.576 and p <= 0.01:
-            return "Hotspot_99pct"
-        if z >= 1.960 and p <= 0.05:
-            return "Hotspot_95pct"
-        if z >= 1.645 and p <= 0.10:
-            return "Hotspot_90pct"
-        return "No_significativo"
-
-    grid_df["categoria_gi_conteo"] = [classify_hotspot(z, p) for z, p in zip(z_cnt, p_cnt)]
-    grid_df["categoria_gi_epdo"] = [classify_hotspot(z, p) for z, p in zip(z_epdo, p_epdo)]
-    grid_df = grid_df.sort_values("gi_z_epdo", ascending=False).reset_index(drop=True)
-    grid_csv = OUT_DIR / "03_grilla_getis_ord_gi.csv"
-    grid_df.to_csv(grid_csv, index=False, encoding="utf-8")
-
-    # 3. Ranking de Ejes Viales e Intersecciones Críticas (separando Frecuencia vs Severidad EPDO)
-    ejes_df = (
-        df.groupby("Calle_Uno_norm")
-        .agg(
-            n_siniestros=("ID", "count"),
-            epdo_total=("indice_epdo", "sum"),
-            epdo_medio=("indice_epdo", lambda s: round(float(s.mean()), 2)),
-            fallecidos=("FALLECIDOS", "sum"),
-            graves=("GRAVES", "sum"),
-            lesionados=("TOTAL_LESI", "sum"),
-            pct_con_lesionados=("con_lesionados", lambda s: round(float(s.mean() * 100.0), 1)),
-            pct_grave_o_fatal=("grave_o_fatal", lambda s: round(float(s.mean() * 100.0), 1)),
-            motocicletas=("Motociclet", "sum"),
-            atropellos=("Atropello", "sum"),
-            bicicletas=("Bicicleta", "sum"),
-            pct_vulnerables=("usuario_vulnerable", lambda s: round(float(s.mean() * 100.0), 1)),
-            pct_noche_corr=("noche_corr", lambda s: round(float(s.mean() * 100.0), 1)),
-            pct_pavimento_adverso=("pavimento_adverso", lambda s: round(float(s.mean() * 100.0), 1)),
-            altitud_media_m=("altitud_m", lambda s: round(float(s.mean()), 1)),
-        )
-        .reset_index()
-    )
-    ejes_top = ejes_df[ejes_df["n_siniestros"] >= 6].sort_values("epdo_total", ascending=False).reset_index(drop=True)
-    ejes_csv = OUT_DIR / "03_intersecciones_y_ejes_criticos.csv"
-    ejes_top.to_csv(ejes_csv, index=False, encoding="utf-8")
-
-    # 4. Formulación de Medidas de Mitigación Basadas en Evidencia
-    # Cuantificamos exactamente cuántos siniestros, lesionados y graves/fatales caen en cada ventana de intervención
-    m1_mask = (df["usuario_vulnerable"] == 1) & (df["es_cruce"] == 1)
-    m2_mask = df["Calle_Uno_norm"].isin(["APOQUINDO", "LAS CONDES", "CRISTOBAL COLON", "MANQUEHUE SUR", "PRESIDENTE RIESCO", "AMERICO VESPUCIO"]) & (df["Motociclet"] == 1)
-    m3_mask = (df["noche_corr"] == 1) & (df["TIPO_SINIE"].isin(["CHOQUE", "CHOQUE LATERAL", "CHOQUE FRONTAL", "CHOQUE POSTERIOR", "VOLCADURA"]))
-    m4_mask = df["Calle_Uno_norm"].isin(["PRESIDENTE KENNEDY", "LAS CONDES", "PADRE HURTADO", "CAMINO EL ALBA", "SAN CARLOS DE APOQUINDO"]) & (
-        (df["pavimento_adverso"] == 1) | (df["altitud_m"] >= 750)
-    )
-    m5_mask = (df["Atropello"] == 1) & (df["es_fin_de_semana"] == 0)
-    m6_mask = (df["causa_especifica"] != "NO_ATENTO_CONDICIONES_TRANSITO")
-
-    mitigacion_rows = [
-        {
-            "id_medida": "MIT-01",
-            "linea_accion": "Protección de Cruces Semaforizados para Usuarios Vulnerables",
-            "hallazgo_empirico_respaldo": (
-                "Los usuarios vulnerables (peatones, motociclistas y ciclistas, n=162) concentran el 67.3% de los siniestros con lesionados "
-                "y el 70.2% de los siniestros graves/fatales (OR ajustado > 10 para atropellos/bicicletas y OR = 4.9 para motos, p < 0.0001). "
-                "El 79.0% ocurre en cruces semaforizados o de prioridad."
-            ),
-            "medida_mitigacion_propuesta": (
-                "Implementar fases semafóricas de salida anticipada peatonal (LPI - Leading Pedestrian Interval de 4–6 s), "
-                "cajas de detención adelantada para motocicletas/bicicletas (motobox/bikebox) y eliminación de giros libres en rojo "
-                "en los 15 cruces con Hotspot Getis-Ord Gi* (p < 0.05)."
-            ),
-            "focalizacion_espacial_temporal": "Cruces semaforizados de Av. Apoquindo, Av. Las Condes, Cristóbal Colón, Manquehue Sur y Pdte. Riesco (Punta Mañana 07–10 h y Tarde 17–21 h, días hábiles).",
-            "siniestros_objetivo_n": int(m1_mask.sum()),
-            "lesionados_objetivo_n": int(df.loc[m1_mask, "TOTAL_LESI"].sum()),
-            "graves_o_fatales_objetivo_n": int(df.loc[m1_mask, "grave_o_fatal"].sum()),
-            "indicador_verificacion_impacto": "Reducción >= 25% en colisiones laterales/atropellos en cruces intervenidos y caída del índice EPDO trimestral.",
-        },
-        {
-            "id_medida": "MIT-02",
-            "linea_accion": "Gestión de Pistas y Conflictos Laterales de Motocicletas (Delivery y Commuting)",
-            "hallazgo_empirico_respaldo": (
-                "Las motocicletas participan en 102 siniestros (15.1% del total comunal), con 61.8% de tasa de lesionados (OR = 6.97, p < 0.0001) "
-                "y 19.6% de siniestros graves/fatales. Presentan correlación positiva con cruces (rho = +0.10) y picos entre 13:00 y 20:00 h."
-            ),
-            "medida_mitigacion_propuesta": (
-                "Segregación táctica de virajes, demarcación de canalización en intersecciones complejas, zonas de detención exclusiva "
-                "para reparto (delivery) fuera de la primera pista de circulación y fiscalización automatizada de cambios sorpresivos de pista."
-            ),
-            "focalizacion_espacial_temporal": "Corredor comercial Av. Apoquindo – Av. Las Condes – Manquehue – Cristóbal Colón (12:00 a 21:00 h).",
-            "siniestros_objetivo_n": int(m2_mask.sum()),
-            "lesionados_objetivo_n": int(df.loc[m2_mask, "TOTAL_LESI"].sum()),
-            "graves_o_fatales_objetivo_n": int(df.loc[m2_mask, "grave_o_fatal"].sum()),
-            "indicador_verificacion_impacto": "Tasa de siniestros con motocicleta por trimestre en los 6 ejes principales.",
-        },
-        {
-            "id_medida": "MIT-03",
-            "linea_accion": "Seguridad Vial Nocturna y de Fin de Semana contra Choques a Elementos Fijos",
-            "hallazgo_empirico_respaldo": (
-                "Una vez corregido el error solar de +12 h, la noche real (29.1% de los siniestros, n=197) muestra una asociación altamente "
-                "significativa con choques contra objetos fijos (OR = 2.18, p = 0.0001) y mayor ocurrencia en fines de semana (OR = 2.02, p = 0.0014), "
-                "asociada a pérdida de control, velocidad nocturna y alcohol."
-            ),
-            "medida_mitigacion_propuesta": (
-                "Instalación de delineadores direccionales retroreflectivos, amortiguadores de impacto en puntas de islas/bandejones centrales, "
-                "iluminación LED de alto contraste en curvas/enlaces y controles preventivos focalizados viernes/sábado 22:00–06:00 h."
-            ),
-            "focalizacion_espacial_temporal": "Av. Pdte. Kennedy (enlaces y caleteras), Av. Las Condes (tramo oriente) y rotondas/cruces con bandejón (21:00 a 06:00 h).",
-            "siniestros_objetivo_n": int(m3_mask.sum()),
-            "lesionados_objetivo_n": int(df.loc[m3_mask, "TOTAL_LESI"].sum()),
-            "graves_o_fatales_objetivo_n": int(df.loc[m3_mask, "grave_o_fatal"].sum()),
-            "indicador_verificacion_impacto": "Reducción de choques nocturnos contra mobiliario urbano/postes/bandejones.",
-        },
-        {
-            "id_medida": "MIT-04",
-            "linea_accion": "Mitigación Climática y Topográfica en Pavimento Húmedo y Sector Precordillerano",
-            "hallazgo_empirico_respaldo": (
-                "El 15.1% de los siniestros ocurre con pavimento húmedo/mojado/lluvia (n=102), elevando la proporción de lesionados al 30.4% "
-                "(vs 25.8% en seco) y coincidiendo con siniestralidad grave/fatal en cotas altas (>750 m s.n.m., p. ej. atropello fatal con lluvia y 6.3 °C). "
-                "Existe un fuerte gradiente térmico-altitudinal (Spearman altitud vs longitud rho = +0.94)."
-            ),
-            "medida_mitigacion_propuesta": (
-                "Tratamiento superficial antideslizante de alta fricción (HFST) en pendientes longitudinales >4%, mejoramiento de drenaje superficial "
-                "y señalización dinámica variable activada por humedad/precipitación (>0.2 mm/h o humedad >=85%)."
-            ),
-            "focalizacion_espacial_temporal": "Sector alto oriente (>= 750 m s.n.m.: San Carlos de Apoquindo, Camino El Alba, Av. Las Condes oriente) y vías rápidas (Pdte. Kennedy) en otoño-invierno (mayo–agosto).",
-            "siniestros_objetivo_n": int(m4_mask.sum()),
-            "lesionados_objetivo_n": int(df.loc[m4_mask, "TOTAL_LESI"].sum()),
-            "graves_o_fatales_objetivo_n": int(df.loc[m4_mask, "grave_o_fatal"].sum()),
-            "indicador_verificacion_impacto": "Razón de siniestros en horas de pavimento mojado vs seco en temporada invernal.",
-        },
-        {
-            "id_medida": "MIT-05",
-            "linea_accion": "Pacificacíon Peatonal Diurna en Polos Laborales, Educacionales y de Servicios",
-            "hallazgo_empirico_respaldo": (
-                "La corrección solar demostró que el 71.4% de los atropellos (30 de 42) ocurre de DÍA y el 92.9% (39 de 42) en días hábiles, "
-                "descartando la hipótesis de esparcimiento nocturno. El 95.2% deja lesionados y el 35.7% resulta grave o fatal (OR = 13.5, p < 0.0001)."
-            ),
-            "medida_mitigacion_propuesta": (
-                "Cruces peatonales a nivel de acera (pasos elevados) en accesos de calles secundarias a ejes arteriales, refugios peatonales "
-                "en calzadas de >= 4 pistas y viseras/orientación de semáforos en horarios de sol rasante (0° < altitud solar <= 15°)."
-            ),
-            "focalizacion_espacial_temporal": "Entorno estaciones Línea 1 (Tobalaba a Los Dominicos) y ejes Apoquindo / Las Condes en horario laboral diurno (08:00–19:00 h).",
-            "siniestros_objetivo_n": int(m5_mask.sum()),
-            "lesionados_objetivo_n": int(df.loc[m5_mask, "TOTAL_LESI"].sum()),
-            "graves_o_fatales_objetivo_n": int(df.loc[m5_mask, "grave_o_fatal"].sum()),
-            "indicador_verificacion_impacto": "Conteo anual de atropellos diurnos y severidad peatonal en ejes principales.",
-        },
-        {
-            "id_medida": "MIT-06",
-            "linea_accion": "Estandarización del Registro Policial/Municipal de Causas y Auditoría de Geocodificación",
-            "hallazgo_empirico_respaldo": (
-                "El 86.7% de los registros usa la etiqueta genérica 'CONDUCCION NO ATENTO CONDICIONES TRANSITO MOMENTO'. Sin embargo, cuando "
-                "se registra una causa específica (n=90: violación de luz roja/preferencia, cambio brusco de pista, alcohol), la tasa de siniestro "
-                "grave o fatal sube de 6.3% a 11.1% (y a 40.0% en violación de semáforo/preferencia, OR = 10.6, p = 0.0004)."
-            ),
-            "medida_mitigacion_propuesta": (
-                "Reemplazar el campo libre/genérico de causa por una lista de verificación multifactorial obligatoria en terreno (maniobra previa, "
-                "fase semafórica, estado de calzada, visibilidad real) y captura automática de coordenada GPS con validación contra catastro vial."
-            ),
-            "focalizacion_espacial_temporal": "Protocolo comunal de registro de siniestros (Seguridad Ciudadana Las Condes / Carabineros).",
-            "siniestros_objetivo_n": int(m6_mask.sum()),
-            "lesionados_objetivo_n": int(df.loc[m6_mask, "TOTAL_LESI"].sum()),
-            "graves_o_fatales_objetivo_n": int(df.loc[m6_mask, "grave_o_fatal"].sum()),
-            "indicador_verificacion_impacto": "Reducción del porcentaje de causa genérica 'no atento' desde 86.7% a < 35%.",
-        },
-    ]
-
-    mitigacion_df = pd.DataFrame(mitigacion_rows)
-    mitigacion_csv = OUT_DIR / "03_matriz_mitigacion_evidencia.csv"
-    mitigacion_df.to_csv(mitigacion_csv, index=False, encoding="utf-8")
-
-    # Figura 05: Mapa de Puntos Calientes (Getis-Ord Gi* y Clusters DBSCAN + Severidad)
-    fig, axes = plt.subplots(1, 2, figsize=(16, 6.8), dpi=160)
-
-    # Panel A: Grilla Getis-Ord Gi* (Severidad EPDO) + puntos según gravedad
-    sc_grid = axes[0].scatter(
-        grid_df["lon_media"],
-        grid_df["lat_media"],
-        c=grid_df["gi_z_epdo"],
-        s=grid_df["n_siniestros"] * 18 + 30,
-        cmap="YlOrRd",
-        alpha=0.85,
-        edgecolors="black",
-        linewidths=0.5,
-    )
-    cbar = plt.colorbar(sc_grid, ax=axes[0], shrink=0.82)
-    cbar.set_label("Z-score Getis-Ord Gi* (Severidad EPDO)", fontsize=8.5)
-
-    # Superponer siniestros graves y fallecidos
-    graves_df = df[df["GRAVES"] > 0]
-    fatales_df = df[df["FALLECIDOS"] > 0]
-    axes[0].scatter(graves_df["longitud"], graves_df["Latitud"], c="#2c3e50", marker="^", s=28, alpha=0.8, label=f"Siniestros con Graves (n={len(graves_df)})")
-    axes[0].scatter(fatales_df["longitud"], fatales_df["Latitud"], c="#00ffff", edgecolors="black", marker="*", s=150, linewidths=1.0, label=f"Siniestros con Fallecidos (n={len(fatales_df)})")
-
-    axes[0].set_title(
-        "A. Hotspots Espaciales Getis-Ord Gi* (Grilla 250x250 m, Severidad EPDO)\n"
-        f"(Celdas Hotspot p < 0.05: {int((grid_df['gi_p_epdo'] <= 0.05).sum())} de {len(grid_df)} celdas activas)",
-        fontsize=10.2,
-        fontweight="bold",
-    )
-    axes[0].set_xlabel("Longitud (°O)")
-    axes[0].set_ylabel("Latitud (°S)")
-    axes[0].set_xlim(-70.612, -70.495)
-    axes[0].set_ylim(-33.438, -33.365)
-    axes[0].legend(loc="lower right", fontsize=8)
-    axes[0].grid(True, alpha=0.25)
-
-    # Panel B: Clusters DBSCAN (eps=150m, min_samples=5) y ruido
-    ruido = df[df["cluster_dbscan"] == -1]
-    en_cluster = df[df["cluster_dbscan"] >= 0]
-    axes[1].scatter(ruido["longitud"], ruido["Latitud"], c="#bdc3c7", s=12, alpha=0.45, label=f"Dispersos fuera de cluster (n={len(ruido)})")
-    sc_db = axes[1].scatter(
-        en_cluster["longitud"],
-        en_cluster["Latitud"],
-        c=en_cluster["cluster_dbscan"],
-        cmap="tab20",
-        s=26,
-        alpha=0.9,
-        label=f"En {len(clusters_df)} Clusters DBSCAN (n={len(en_cluster)})",
-    )
-    # Etiquetar los top 8 clusters por EPDO con offsets escalonados para evitar traslape
-    offsets_top8 = [
-        (8, -22),
-        (10, 12),
-        (12, -16),
-        (-65, 16),
-        (8, 14),
-        (-70, -22),
-        (-55, 14),
-        (10, -14),
-    ]
-    for idx_c, (_, crow) in enumerate(clusters_df.head(8).iterrows()):
-        ox, oy = offsets_top8[idx_c % len(offsets_top8)]
-        axes[1].annotate(
-            f"#{int(crow['ranking_severidad_epdo'])} {crow['eje_principal'][:14]} (n={int(crow['n_siniestros'])}, EPDO={int(crow['epdo_total'])})",
-            xy=(crow["lon_centroide"], crow["lat_centroide"]),
-            xytext=(ox, oy),
-            textcoords="offset points",
-            fontsize=6.8,
-            fontweight="bold",
-            arrowprops=dict(arrowstyle="-", color="#34495e", lw=0.7, alpha=0.7),
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="#34495e", alpha=0.88),
-        )
-
-    axes[1].set_title(
-        "B. Micro-Clusters Críticos DBSCAN (Haversine ε = 150 m, min = 5)\n"
-        "(Etiquetados los 8 clusters de mayor severidad acumulada EPDO)",
-        fontsize=10.2,
-        fontweight="bold",
-    )
-    axes[1].set_xlabel("Longitud (°O)")
-    axes[1].set_ylabel("Latitud (°S)")
-    axes[1].set_xlim(-70.612, -70.495)
-    axes[1].set_ylim(-33.438, -33.365)
-    axes[1].legend(loc="lower right", fontsize=8)
-    axes[1].grid(True, alpha=0.25)
-
-    plt.tight_layout()
-    plt.savefig(OUT_DIR / "fig05_mapa_hotspots_y_severidad.png", bbox_inches="tight")
-    plt.close(fig)
-
-    # Figura 06: Comparación de Ejes Viales (Concentración vs Severidad EPDO y Usuarios Vulnerables)
-    fig, axes = plt.subplots(1, 2, figsize=(15.5, 5.8), dpi=160)
-
-    top12_ejes = ejes_top.head(12).sort_values("epdo_total", ascending=True)
-    y_e = np.arange(len(top12_ejes))
-    axes[0].barh(y_e - 0.18, top12_ejes["n_siniestros"], height=0.35, color="#34495e", label="Conteo absoluto de siniestros (N)")
-    axes[0].barh(y_e + 0.18, top12_ejes["epdo_total"], height=0.35, color="#e74c3c", label="Severidad Ponderada (Índice EPDO)")
-    axes[0].set_yticks(y_e)
-    axes[0].set_yticklabels(top12_ejes["Calle_Uno_norm"], fontsize=8.5)
-    axes[0].set_xlabel("Magnitud (Conteo N vs. Puntaje EPDO)")
-    axes[0].set_title("A. Top 12 Ejes Viales: Frecuencia vs. Severidad Equivalente (EPDO)", fontsize=10.2, fontweight="bold")
-    axes[0].legend(fontsize=8.5, loc="lower right")
-    axes[0].grid(True, axis="x", alpha=0.25)
-
-    # Panel B: Composición de Usuarios Vulnerables y Severidad Media en los Top 12 Ejes
-    axes[1].barh(y_e, top12_ejes["motocicletas"], color="#e67e22", label="Motocicletas")
-    axes[1].barh(y_e, top12_ejes["atropellos"], left=top12_ejes["motocicletas"], color="#c0392b", label="Atropellos (Peatones)")
-    axes[1].barh(
-        y_e,
-        top12_ejes["bicicletas"],
-        left=top12_ejes["motocicletas"] + top12_ejes["atropellos"],
-        color="#27ae60",
-        label="Bicicletas",
-    )
-    for idx_row, (_, r_eje) in enumerate(top12_ejes.iterrows()):
-        tot_v = int(r_eje["motocicletas"] + r_eje["atropellos"] + r_eje["bicicletas"])
-        axes[1].text(
-            tot_v + 0.4,
-            idx_row,
-            f"EPDO/sin={r_eje['epdo_medio']:.2f} ({r_eje['pct_con_lesionados']:.0f}% les.)",
-            va="center",
-            fontsize=7.5,
-        )
-    axes[1].set_yticks(y_e)
-    axes[1].set_yticklabels(top12_ejes["Calle_Uno_norm"], fontsize=8.5)
-    axes[1].set_xlabel("Cantidad de siniestros con usuarios vulnerables")
-    axes[1].set_title("B. Usuarios Vulnerables y Severidad Media por Eje Vial", fontsize=10.2, fontweight="bold")
-    axes[1].legend(fontsize=8.5, loc="lower right")
-    axes[1].set_xlim(0, 32)
-    axes[1].grid(True, axis="x", alpha=0.25)
-
-    plt.tight_layout()
-    plt.savefig(OUT_DIR / "fig06_perfiles_clusters_criticos.png", bbox_inches="tight")
-    plt.close(fig)
-
-    sintesis = {
-        "resumen_dbscan": {
-            "parametros": {"eps_metros": 150.0, "min_samples": 5, "metrica": "haversine"},
-            "n_clusters_detectados": int(len(clusters_df)),
-            "siniestros_en_clusters": int(len(en_cluster)),
-            "pct_siniestros_en_clusters": round(float(len(en_cluster) / len(df) * 100.0), 2),
-            "top_10_clusters_por_epdo": clusters_df.head(10).to_dict(orient="records"),
-        },
-        "resumen_getis_ord_gi": {
-            "tamano_celda_m": 250.0,
-            "distancia_vecindad_m": 400.0,
-            "total_celdas_con_siniestros": int(len(grid_df)),
-            "celdas_hotspot_conteo_p05": int((grid_df["gi_p_conteo"] <= 0.05).sum()),
-            "celdas_hotspot_epdo_p05": int((grid_df["gi_p_epdo"] <= 0.05).sum()),
-            "top_10_celdas_gi_epdo": grid_df.head(10).to_dict(orient="records"),
-        },
-        "top_10_ejes_criticos": ejes_top.head(10).to_dict(orient="records"),
-        "medidas_mitigacion": mitigacion_rows,
+    summary = {
+        "crs": CRS_UTM,
+        "origen_m": [0, 0],
+        "tamano_celda_m": CELL_SIZE_M,
+        "distancia_vecindad_m": DISTANCE_M,
+        "total_celdas_con_siniestros": len(grid),
+        "universo": "celdas ocupadas por los siniestros de la muestra",
+        "alcance": "concentración observada de siniestros y puntajes acumulados, sin denominador de exposición",
+        "n_permutaciones": N_PERMUTATIONS,
+        "semilla_permutacion": PERMUTATION_SEED,
+        "nulo_permutacion": "intercambiabilidad entre celdas ocupadas, con vecindad fija",
+        "alfa": ALPHA,
+        "criterio_positivo": "z > 0 y q BH <= 0.05 en ambos métodos",
     }
+    metrics = (("conteo", "n_siniestros"), ("epdo", "epdo_total"), ("conaset", "puntaje_conaset_total"))
+    for suffix, col in metrics:
+        z, p, p_perm = compute_getis_ord_gi_star(grid[col].to_numpy(), adjacency)
+        q = multipletests(p, method="fdr_bh")[1]
+        q_perm = multipletests(p_perm, method="fdr_bh")[1]
+        positive = z > 0
+        combined = positive & (q <= ALPHA) & (q_perm <= ALPHA)
+        grid[f"gi_z_{suffix}"] = z
+        grid[f"gi_p_{suffix}"] = p
+        grid[f"gi_p_perm_{suffix}"] = p_perm
+        grid[f"gi_q_bh_{suffix}"] = q
+        grid[f"gi_q_bh_perm_{suffix}"] = q_perm
+        grid[f"hotspot_{suffix}"] = combined
+        summary.update({
+            f"celdas_hotspot_{suffix}_p05": int(np.sum(positive & (p <= ALPHA))),
+            f"celdas_hotspot_{suffix}_bh_analitico": int(np.sum(positive & (q <= ALPHA))),
+            f"celdas_hotspot_{suffix}_bh_permutacion": int(np.sum(positive & (q_perm <= ALPHA))),
+            f"celdas_hotspot_{suffix}_ambos": int(np.sum(combined)),
+        })
+    return grid, summary
 
-    with open(OUT_DIR / "03_sintesis_mitigacion.json", "w", encoding="utf-8") as f:
-        json.dump(sintesis, f, ensure_ascii=False, indent=2)
 
-    print(f"[03] Clusters DBSCAN detectados: {len(clusters_df)} ({len(en_cluster)}/{len(df)} siniestros)")
-    print(f"[03] Celdas Getis-Ord Gi* significativas (p <= 0.05): EPDO={int((grid_df['gi_p_epdo'] <= 0.05).sum())}, Conteo={int((grid_df['gi_p_conteo'] <= 0.05).sum())}")
-    print(f"[03] Matriz de mitigación exportada en: {mitigacion_csv.name}")
-    return sintesis
+def conaset_score(df: pd.DataFrame) -> np.ndarray:
+    """Un punto por ocurrencia y un incremento por la peor consecuencia del siniestro."""
+    return np.select(
+        [df["FALLECIDOS"] > 0, df["GRAVES"] > 0, df["MENOS_GRAV"] > 0, df["LEVES"] > 0],
+        [11, 7, 5, 3],
+        default=1,
+    )
+
+
+def dbscan_labels(coordinates: np.ndarray, radius_m: int) -> np.ndarray:
+    if len(coordinates) == 0:
+        return np.array([], dtype=int)
+    return DBSCAN(
+        eps=radius_m / EARTH_RADIUS_M, min_samples=MIN_SAMPLES, metric="haversine",
+    ).fit_predict(coordinates)
+
+
+def cluster_counts(labels: np.ndarray) -> dict[str, int]:
+    assigned = labels[labels >= 0]
+    return {"n_clusters_detectados": int(np.unique(assigned).size), "siniestros_en_clusters": len(assigned)}
+
+
+def summarize_crashes(groups) -> pd.DataFrame:
+    summary = groups.agg(
+        n_siniestros=("ID", "size"),
+        epdo_total=("indice_epdo", "sum"),
+        epdo_medio=("indice_epdo", "mean"),
+        puntaje_conaset_total=("puntaje_conaset", "sum"),
+        fallecidos=("FALLECIDOS", "sum"),
+        graves=("GRAVES", "sum"),
+        total_lesionados=("TOTAL_LESI", "sum"),
+        siniestros_graves_o_fatales=("grave_o_fatal", "sum"),
+        n_motocicletas=("Motociclet", "sum"),
+        n_atropellos=("Atropello", "sum"),
+        n_bicicletas=("Bicicleta", "sum"),
+        pct_con_lesionados=("con_lesionados", "mean"),
+        pct_grave_o_fatal=("grave_o_fatal", "mean"),
+        pct_usuarios_vulnerables=("usuario_vulnerable", "mean"),
+    )
+    for column in ("pct_con_lesionados", "pct_grave_o_fatal", "pct_usuarios_vulnerables"):
+        summary[column] = (100 * summary[column]).round(1)
+    return summary.round({"epdo_medio": 2})
+
+
+def rank_road_units(df: pd.DataFrame) -> pd.DataFrame:
+    streets = (
+        df[["ID", "Calle_Uno_norm", "Calle_Dos_norm"]]
+        .melt(id_vars="ID", value_name="unidad_vial")
+        .dropna(subset="unidad_vial")
+    )
+    streets = streets.loc[streets["unidad_vial"] != "", ["ID", "unidad_vial"]].drop_duplicates()
+    pairs = df.loc[
+        df["Calle_Uno_norm"].fillna("").ne("")
+        & df["Calle_Dos_norm"].fillna("").ne("")
+        & (df["Calle_Uno_norm"] != df["Calle_Dos_norm"]),
+        ["ID", "nodo_vial"],
+    ].rename(columns={"nodo_vial": "unidad_vial"})
+    units = pd.concat(
+        [streets.assign(tipo_unidad="eje"), pairs.assign(tipo_unidad="interseccion")],
+        ignore_index=True,
+    )
+    return summarize_crashes(
+        units.merge(df, on="ID", validate="many_to_one").groupby(["tipo_unidad", "unidad_vial"]),
+    ).reset_index().sort_values(
+        ["tipo_unidad", "epdo_total", "n_siniestros", "unidad_vial"],
+        ascending=[True, False, False, True],
+    )
+
+
+def cluster_profile(df: pd.DataFrame, coordinates: np.ndarray) -> pd.DataFrame:
+    assigned = df.loc[df["cluster_dbscan"] >= 0]
+    clusters = summarize_crashes(assigned.groupby("cluster_dbscan")).rename_axis("cluster_id")
+    support_rows = []
+    for cluster_id, group in assigned.groupby("cluster_dbscan"):
+        node_support = group["nodo_vial"].fillna("").value_counts().sort_index().idxmax()
+        node_count = int(group["nodo_vial"].fillna("").eq(node_support).sum())
+        points = coordinates[group.index.to_numpy()]
+        support_rows.append({
+            "cluster_id": cluster_id,
+            "interseccion_dominante": node_support,
+            "n_nodo_dominante": node_count,
+            "pct_nodo_dominante": round(100 * node_count / len(group), 1),
+            "n_coordenadas_distintas": int(np.unique(points, axis=0).shape[0]),
+            "diametro_m": round(float(haversine_distances(points).max() * EARTH_RADIUS_M), 1),
+        })
+    support = pd.DataFrame(support_rows, columns=[
+        "cluster_id", "interseccion_dominante", "n_nodo_dominante", "pct_nodo_dominante",
+        "n_coordenadas_distintas", "diametro_m",
+    ]).set_index("cluster_id")
+    clusters = clusters.join(support).reset_index().sort_values(
+        ["epdo_total", "n_siniestros", "cluster_id"], ascending=[False, False, True],
+    )
+    clusters["ranking_severidad_epdo"] = np.arange(1, len(clusters) + 1)
+    conaset_order = clusters.sort_values(
+        ["puntaje_conaset_total", "n_siniestros", "cluster_id"], ascending=[False, False, True],
+    )
+    clusters["ranking_puntaje_conaset"] = pd.Series(np.arange(1, len(clusters) + 1), index=conaset_order.index)
+    return clusters
+
+
+def save_figures(grid: pd.DataFrame, clusters: pd.DataFrame, *, n_tested: int) -> None:
+    fig, axes = plt.subplots(1, 2, figsize=(13, 6), layout="constrained")
+    z_limit = max(1.0, float(grid[["gi_z_conteo", "gi_z_epdo"]].abs().max().max()))
+    for ax, suffix, title in (
+        (axes[0], "conteo", "Frecuencia de siniestros registrados"),
+        (axes[1], "epdo", "Puntaje ponderado acumulado"),
+    ):
+        cells = ax.scatter(
+            grid["x_centro_m"], grid["y_centro_m"], c=grid[f"gi_z_{suffix}"],
+            marker="s", s=42, cmap="coolwarm", vmin=-z_limit, vmax=z_limit,
+        )
+        hotspots = grid.loc[grid[f"hotspot_{suffix}"]]
+        ax.scatter(
+            hotspots["x_centro_m"], hotspots["y_centro_m"], marker="s",
+            s=65, facecolors="none", edgecolors="black",
+        )
+        ax.set(title=title, xlabel="Este (m)", ylabel="Norte (m)", aspect="equal")
+        ax.ticklabel_format(style="plain", useOffset=False)
+    fig.colorbar(cells, ax=axes, label="Z de Getis-Ord Gi*")
+    fig.suptitle(
+        f"Grilla UTM de 250 m · {len(grid)} de {n_tested} celdas analizadas visibles "
+        f"({MIN_PUBLIC_COUNT} o más siniestros)\n"
+        "Borde negro: asociación positiva con ajuste BH en ambos métodos"
+    )
+    fig.savefig(OUT_DIR / "fig05_mapa_hotspots_y_severidad.png", dpi=160)
+    plt.close(fig)
+
+    top = clusters.head(10).iloc[::-1]
+    fig, ax = plt.subplots(figsize=(9, 5), layout="constrained")
+    y = np.arange(len(top))
+    ax.barh(y, top["siniestros_graves_o_fatales"], label="Graves o fatales")
+    ax.barh(
+        y, top["n_siniestros"] - top["siniestros_graves_o_fatales"],
+        left=top["siniestros_graves_o_fatales"], label="Otros siniestros",
+    )
+    ax.set_yticks(y, [f"Grupo {cid}" for cid in top["cluster_id"]])
+    ax.set(xlabel="Siniestros", title="Grupos DBSCAN con mayor puntaje acumulado")
+    ax.legend()
+    fig.savefig(OUT_DIR / "fig06_perfiles_clusters_criticos.png", dpi=160)
+    plt.close(fig)
+
+
+def main() -> dict:
+    df = pd.read_csv(IN_CSV, dtype={"dentro_limite_comunal": "boolean"})
+    if df.empty:
+        raise ValueError("El análisis espacial requiere al menos un siniestro.")
+    transformer = Transformer.from_crs("EPSG:4326", CRS_UTM, always_xy=True)
+    easting, northing = transformer.transform(df["longitud"].to_numpy(), df["Latitud"].to_numpy())
+    df["grid_ix"], df["grid_iy"] = grid_indices(easting, northing)
+    df["puntaje_conaset"] = conaset_score(df)
+
+    coordinates = np.deg2rad(df[["Latitud", "longitud"]].to_numpy())
+    df["cluster_dbscan"] = dbscan_labels(coordinates, DBSCAN_METERS)
+    clusters = cluster_profile(df, coordinates)
+    public_clusters = clusters.loc[clusters["n_siniestros"] >= MIN_PUBLIC_COUNT].drop(columns="fallecidos").copy()
+    public_clusters.loc[
+        public_clusters["n_nodo_dominante"] < MIN_PUBLIC_COUNT, "interseccion_dominante"
+    ] = "Nodo con menos de cinco registros"
+    cluster_summary = cluster_counts(df["cluster_dbscan"].to_numpy())
+    cluster_summary.update({
+        "parametros": {"eps_metros": DBSCAN_METERS, "min_samples": MIN_SAMPLES, "metrica": "haversine"},
+        "pct_siniestros_en_clusters": round(100 * cluster_summary["siniestros_en_clusters"] / len(df), 2),
+        "n_clusters_publicados": len(public_clusters),
+        "clusters_publicados_min_n": MIN_PUBLIC_COUNT,
+        "top_10_clusters_por_epdo": public_clusters.head(10).to_dict(orient="records"),
+        "sensibilidad_eps": [
+            {"eps_metros": eps, **cluster_counts(dbscan_labels(coordinates, eps))}
+            for eps in (100, 150, 200)
+        ],
+        "n_clusters_mas_de_300_m": int(clusters["diametro_m"].gt(300).sum()),
+        "n_clusters_una_coordenada": int(clusters["n_coordenadas_distintas"].eq(1).sum()),
+        "n_clusters_nodo_dominante_menos_50_pct": int(
+            (2 * clusters["n_nodo_dominante"] < clusters["n_siniestros"]).sum()
+        ),
+        "n_graves_o_fatales_en_clusters": int(clusters["siniestros_graves_o_fatales"].sum()),
+    })
+    if "dentro_limite_comunal" in df:
+        inside = df["dentro_limite_comunal"].fillna(False).to_numpy(dtype=bool)
+        cluster_summary["sensibilidad_solo_dentro_limite"] = {
+            "n_siniestros": int(inside.sum()),
+            **cluster_counts(dbscan_labels(coordinates[inside], DBSCAN_METERS)),
+        }
+
+    grid, grid_summary = statistics_for_grid(df)
+    public_grid = grid.loc[grid["n_siniestros"] >= MIN_PUBLIC_COUNT]
+    grid_summary["celdas_publicadas_min_n"] = MIN_PUBLIC_COUNT
+    grid_summary["n_celdas_publicadas"] = len(public_grid)
+    roads = rank_road_units(df)
+    roads = roads.loc[roads["n_siniestros"] >= MIN_PUBLIC_COUNT].drop(columns="fallecidos")
+    mitigacion, cobertura_mitigacion = construir_matriz(df)
+    for frame, filename in (
+        (public_clusters, "03_hotspots_dbscan.csv"),
+        (public_grid, "03_grilla_getis_ord_gi.csv"),
+        (roads, "03_intersecciones_y_ejes_criticos.csv"),
+        (mitigacion, "03_matriz_mitigacion_evidencia.csv"),
+    ):
+        frame.to_csv(OUT_DIR / filename, index=False, encoding="utf-8")
+    save_figures(public_grid, public_clusters, n_tested=len(grid))
+
+    top_epdo = set(clusters.head(10)["cluster_id"])
+    top_conaset = set(clusters.nsmallest(10, "ranking_puntaje_conaset")["cluster_id"])
+    summary = {
+        "resumen_dbscan": cluster_summary,
+        "resumen_getis_ord_gi": grid_summary,
+        "sensibilidad_ponderacion": {
+            "indice_original_total": int(df["indice_epdo"].sum()),
+            "puntaje_conaset_total": int(df["puntaje_conaset"].sum()),
+            "n_puntajes_distintos": int(df["indice_epdo"].ne(df["puntaje_conaset"]).sum()),
+            "n_clusters_top_10_comunes": len(top_epdo & top_conaset),
+        },
+        "top_10_ejes_criticos": roads.loc[roads["tipo_unidad"] == "eje"].head(10).to_dict(orient="records"),
+        "top_10_intersecciones_criticas": roads.loc[
+            roads["tipo_unidad"] == "interseccion"
+        ].head(10).to_dict(orient="records"),
+        "medidas_mitigacion": mitigacion.to_dict(orient="records"),
+        "cobertura_mitigacion": cobertura_mitigacion,
+    }
+    with (OUT_DIR / "03_sintesis_mitigacion.json").open("w", encoding="utf-8") as out:
+        json.dump(summary, out, ensure_ascii=False, indent=2, allow_nan=False)
+    print(f"[03] Grupos DBSCAN: {len(clusters)} ({cluster_summary['siniestros_en_clusters']}/{len(df)} siniestros)")
+    print(
+        "[03] Celdas Gi* positivas con BH en ambos métodos: "
+        f"frecuencia={grid_summary['celdas_hotspot_conteo_ambos']}, "
+        f"puntaje ponderado={grid_summary['celdas_hotspot_epdo_ambos']}"
+    )
+    return summary
 
 
 if __name__ == "__main__":

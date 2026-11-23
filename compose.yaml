@@ -1,46 +1,40 @@
 name: accidentes-las-condes-confluencia
 
+x-entorno: &entorno
+  image: las-condes-siniestros:revision
+  working_dir: /workspace
+  network_mode: none
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  tmpfs: ["/tmp:mode=1777"]
+
 services:
   desarrollo:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: las-condes-siniestros:clase7
-    container_name: lc-desarrollo
-    working_dir: /workspace
+    <<: *entorno
+    user: "${ANALISIS_UID:-1000}:${ANALISIS_GID:-1000}"
     volumes:
-      - ./datos:/workspace/datos:ro
       - ./desarrollo:/workspace/desarrollo:rw
       - ./docs:/workspace/docs:ro
     command: ["sleep", "infinity"]
-    security_opt:
-      - no-new-privileges:true
 
   experimentacion:
+    <<: *entorno
     build:
       context: .
       dockerfile: Dockerfile
-    image: las-condes-siniestros:clase7
-    container_name: lc-experimentacion
-    working_dir: /workspace
+    user: "${ANALISIS_UID:-1000}:${ANALISIS_GID:-1000}"
     volumes:
       - ./datos:/workspace/datos:ro
       - ./desarrollo:/workspace/desarrollo:ro
       - ./experimentos/resultados:/workspace/experimentos/resultados:rw
+      - ./experimentos/privado:/workspace/experimentos/privado:rw
     command: ["python", "desarrollo/run_all.py"]
-    security_opt:
-      - no-new-privileges:true
 
   auditoria:
-    image: las-condes-siniestros:clase7
-    container_name: lc-auditoria
-    working_dir: /workspace
+    <<: *entorno
+    user: "65534:65534"
     volumes:
-      - ./datos:/workspace/datos:ro
-      - ./docs:/workspace/docs:ro
       - ./desarrollo:/workspace/desarrollo:ro
       - ./experimentos/resultados:/workspace/experimentos/resultados:ro
-      - ./auditoria:/workspace/auditoria:rw
-    command: ["sleep", "infinity"]
-    security_opt:
-      - no-new-privileges:true
+    command: ["python", "desarrollo/run_all.py", "--verificar"]

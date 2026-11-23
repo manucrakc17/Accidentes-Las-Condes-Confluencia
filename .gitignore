@@ -19,3 +19,10 @@ Thumbs.db
 *.key
 credentials.json
 secrets/
+
+# Microdatos locales y artefactos heredados con registros individuales.
+/datos/*.xlsx
+/experimentos/privado/
+/experimentos/resultados/SINIESTROS_LAS_CONDES_CORREGIDO.csv
+/confluencia-agents-demo/project/*.xlsx
+/confluencia-agents-demo/project/aaaasd.pdf

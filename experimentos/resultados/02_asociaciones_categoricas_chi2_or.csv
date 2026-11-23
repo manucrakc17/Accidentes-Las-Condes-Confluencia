@@ -1,31 +1,31 @@
-hipotesis,factor_exposicion,variable_respuesta,n_expuestos,eventos_en_expuestos,pct_evento_expuestos,n_no_expuestos,eventos_en_no_expuestos,pct_evento_no_expuestos,odds_ratio,ic95_inf,ic95_sup,p_fisher,p_chi2,v_cramer,significativo_p05
-Atropello a peatón -> Siniestro con lesionados,Atropello,con_lesionados,42,37,88.1,634,142,22.4,25.639,9.892,66.453,0.0,0.0,0.358,True
-Cualquier usuario vulnerable (peatón/moto/bici) -> Siniestro con lesionados,usuario_vulnerable,con_lesionados,165,96,58.18,511,83,16.24,7.174,4.865,10.581,0.0,0.0,0.407,True
-Usuario vulnerable (peatón/moto/bici) -> Siniestro grave o fatal,usuario_vulnerable,grave_o_fatal,165,34,20.61,511,13,2.54,9.942,5.1,19.381,0.0,0.0,0.303,True
-Atropello a peatón -> Siniestro grave o fatal,Atropello,grave_o_fatal,42,13,30.95,634,34,5.36,7.911,3.775,16.578,1e-06,0.0,0.24,True
-Involucramiento de motocicleta -> Siniestro grave o fatal,Motociclet,grave_o_fatal,102,20,19.61,574,27,4.7,4.941,2.65,9.214,2e-06,0.0,0.206,True
-Involucramiento de motocicleta -> Siniestro con lesionados,Motociclet,con_lesionados,102,46,45.1,574,133,23.17,2.724,1.762,4.21,9e-06,4e-06,0.174,True
-Involucramiento de bicicleta -> Siniestro con lesionados,Bicicleta,con_lesionados,25,16,64.0,651,163,25.04,5.322,2.308,12.276,6.6e-05,1.5e-05,0.162,True
-Causa específica (maniobra/semáforo/alcohol/peatón vs 'no atento') -> Con lesionados,causa_distinta_no_atento,con_lesionados,90,39,43.33,586,140,23.89,2.436,1.541,3.852,0.000183,9.9e-05,0.145,True
-Desobedecer semáforo o preferencia de paso -> Con lesionados,causa_violacion_paso_semaforo,con_lesionados,15,10,66.67,661,169,25.57,5.822,1.962,17.277,0.001139,0.000361,0.132,True
-Ocurrencia en cruce (semaforizado o con señal) -> Con lesionados,es_cruce,con_lesionados,565,136,24.07,111,43,38.74,0.501,0.327,0.769,0.002101,0.001365,0.117,True
-Zona alta precordillerana (>= 750 m s.n.m.) -> Siniestro grave o fatal,zona_alta_precordillera,grave_o_fatal,87,13,14.94,589,34,5.77,2.868,1.448,5.681,0.004994,0.001695,0.115,True
-Zona alta precordillerana (>= 750 m s.n.m.) -> Con lesionados,zona_alta_precordillera,con_lesionados,87,32,36.78,589,147,24.96,1.749,1.089,2.81,0.026316,0.019638,0.081,True
-Causa específica distinta a 'no atento' -> Siniestro grave o fatal,causa_distinta_no_atento,grave_o_fatal,90,11,12.22,586,36,6.14,2.127,1.04,4.35,0.044214,0.034771,0.072,True
-Condición nocturna (corregida <= 0°) -> Siniestro grave o fatal,noche_corr,grave_o_fatal,165,17,10.3,511,30,5.87,1.842,0.988,3.433,0.076347,0.05164,0.064,False
-Fin de semana -> Choque contra objeto fijo,es_fin_de_semana,es_choque_fijo,121,30,24.79,555,101,18.2,1.482,0.93,2.361,0.100114,0.096302,0.051,False
-Pavimento húmedo/mojado/lluvia -> Con lesionados,pavimento_adverso,con_lesionados,102,31,30.39,574,148,25.78,1.257,0.792,1.994,0.331955,0.331064,0.0,False
-Involucramiento de bicicleta -> Siniestro grave o fatal,Bicicleta,grave_o_fatal,25,3,12.0,651,44,6.76,1.881,0.542,6.53,0.407969,0.311976,0.006,False
-Presencia de niebla -> Con lesionados,niebla,con_lesionados,40,8,20.0,636,171,26.89,0.68,0.307,1.504,0.459663,0.338309,0.0,False
-Precipitación acumulada 24h > 0 mm -> Con lesionados,lluvia_reciente_24h,con_lesionados,101,30,29.7,575,149,25.91,1.208,0.758,1.925,0.463261,0.425946,0.0,False
-Hora punta (07-10 h / 17-21 h) -> Involucramiento de usuario vulnerable,en_hora_punta,usuario_vulnerable,307,79,25.73,369,86,23.31,1.14,0.802,1.621,0.473208,0.464578,0.0,False
-Condición nocturna (corregida) -> Choque contra objeto/elemento fijo,noche_corr,es_choque_fijo,165,35,21.21,511,96,18.79,1.164,0.754,1.797,0.497988,0.493155,0.0,False
-Fin de semana -> Siniestro grave o fatal,es_fin_de_semana,grave_o_fatal,121,10,8.26,555,37,6.67,1.261,0.609,2.612,0.553737,0.531234,0.0,False
-Pavimento húmedo/mojado -> Choque contra objeto fijo,pavimento_adverso,es_choque_fijo,102,22,21.57,574,109,18.99,1.173,0.7,1.965,0.586521,0.543692,0.0,False
-Condición nocturna (corregida <= 0°) -> Con lesionados,noche_corr,con_lesionados,165,41,24.85,511,138,27.01,0.894,0.597,1.338,0.613242,0.585017,0.0,False
-Ocurrencia en cruce -> Siniestro con motocicleta,es_cruce,Motociclet,565,84,14.87,111,18,16.22,0.902,0.518,1.572,0.771644,0.716608,0.0,False
-Sol rasante de encandilamiento (0° < alt <= 15°) -> Con lesionados,sol_bajo_encandilamiento,con_lesionados,106,29,27.36,570,150,26.32,1.055,0.662,1.68,0.811459,0.82321,0.0,False
-Pavimento húmedo/mojado/lluvia -> Siniestro grave o fatal,pavimento_adverso,grave_o_fatal,102,6,5.88,574,41,7.14,0.812,0.336,1.966,0.832814,0.644647,0.0,False
-Fin de semana (sábado/domingo) -> Con lesionados,es_fin_de_semana,con_lesionados,121,32,26.45,555,147,26.49,0.998,0.639,1.559,1.0,0.992754,0.0,False
-Desobedecer semáforo o preferencia -> Siniestro grave o fatal,causa_violacion_paso_semaforo,grave_o_fatal,15,1,6.67,661,46,6.96,0.955,0.123,7.424,1.0,0.964872,0.0,False
-Sol rasante (0°-15°) -> Atropello peatonal,sol_bajo_encandilamiento,Atropello,106,6,5.66,570,36,6.32,0.89,0.365,2.168,1.0,0.797418,0.0,False
+hipotesis,factor_exposicion,variable_respuesta,n_expuestos,eventos_en_expuestos,pct_evento_expuestos,n_no_expuestos,eventos_en_no_expuestos,pct_evento_no_expuestos,odds_ratio,ic95_inf,ic95_sup,p_fisher,p_chi2,v_cramer,significativo_p05,estimable,q_fdr_bh,p_holm,significativo_fdr_bh_05,significativo_holm_05
+Cualquier usuario vulnerable (peatón/moto/bici) -> Siniestro con lesionados,usuario_vulnerable,con_lesionados,165,96,58.18,511,83,16.24,7.174,4.865,10.581,4.004446063675781e-24,2.524194768174816e-26,0.407,True,True,1.2013338191027343e-22,1.2013338191027343e-22,True,True
+Atropello a peatón -> Siniestro con lesionados,Atropello,con_lesionados,42,37,88.1,634,142,22.4,25.639,9.892,66.453,5.540562692962254e-18,9.171809842919319e-21,0.358,True,True,8.310844039443381e-17,1.6067631809590536e-16,True,True
+Usuario vulnerable (peatón/moto/bici) -> Siniestro grave o fatal,usuario_vulnerable,grave_o_fatal,165,34,20.61,511,13,2.54,9.942,5.1,19.381,6.993608199087352e-13,2.1770460681490263e-15,0.303,True,True,6.993608199087351e-12,1.9582102957444586e-11,True,True
+Atropello a peatón -> Siniestro grave o fatal,Atropello,grave_o_fatal,42,13,30.95,634,34,5.36,7.911,3.775,16.578,9.679441985350852e-07,2.712151537995876e-10,0.24,True,True,7.259581489013139e-06,2.61344933604473e-05,True,True
+Involucramiento de motocicleta -> Siniestro grave o fatal,Motociclet,grave_o_fatal,102,20,19.61,574,27,4.7,4.941,2.65,9.214,2.043907605396899e-06,4.9447451998304185e-08,0.206,True,True,1.2263445632381393e-05,5.314159774031937e-05,True,True
+Involucramiento de motocicleta -> Siniestro con lesionados,Motociclet,con_lesionados,102,46,45.1,574,133,23.17,2.724,1.762,4.21,9.451675347888491e-06,3.746322704735077e-06,0.174,True,True,4.725837673944245e-05,0.00023629188369721227,True,True
+Involucramiento de bicicleta -> Siniestro con lesionados,Bicicleta,con_lesionados,25,16,64.0,651,163,25.04,5.322,2.308,12.276,6.596029481032768e-05,1.4724319864896146e-05,0.162,True,True,0.0002826869777585472,0.0015830470754478643,True,True
+Causa específica (maniobra/semáforo/alcohol/peatón vs 'no atento') -> Con lesionados,causa_distinta_no_atento,con_lesionados,90,39,43.33,586,140,23.89,2.436,1.541,3.852,0.00018265642536049927,9.935126524250688e-05,0.145,True,True,0.0006849615951018723,0.004201097783291483,True,True
+Desobedecer semáforo o preferencia de paso -> Con lesionados,causa_violacion_paso_semaforo,con_lesionados,15,10,66.67,661,169,25.57,5.822,1.962,17.277,0.001139441659009536,0.0003605625503187894,0.132,True,True,0.00379813886336512,0.02506771649820979,True,True
+Ocurrencia en cruce registrado -> Con lesionados,es_cruce,con_lesionados,565,136,24.07,111,43,38.74,0.501,0.327,0.769,0.0021008638501495225,0.0013646925727840765,0.117,True,True,0.0063025915504485676,0.044118140853139975,True,True
+Zona alta precordillerana (>= 750 m s.n.m.) -> Siniestro grave o fatal,zona_alta_precordillera,grave_o_fatal,87,13,14.94,589,34,5.77,2.868,1.448,5.681,0.00499352193420571,0.0016954237541661713,0.115,True,True,0.013618696184197391,0.0998704386841142,True,False
+Zona alta precordillerana (>= 750 m s.n.m.) -> Con lesionados,zona_alta_precordillera,con_lesionados,87,32,36.78,589,147,24.96,1.749,1.089,2.81,0.026315793508546945,0.019637552445967654,0.081,True,True,0.06578948377136735,0.500000076662392,False,False
+Causa específica distinta a 'no atento' -> Siniestro grave o fatal,causa_distinta_no_atento,grave_o_fatal,90,11,12.22,586,36,6.14,2.127,1.04,4.35,0.044213651924484405,0.03477050773273974,0.072,True,True,0.10203150444111786,0.7958457346407193,False,False
+Condición nocturna (corregida <= 0°) -> Siniestro grave o fatal,noche_corr,grave_o_fatal,165,17,10.3,511,30,5.87,1.842,0.988,3.433,0.0763465451327908,0.0516402426773805,0.064,False,True,0.163599739570266,1.0,False,False
+Fin de semana -> Choque contra objeto fijo,es_fin_de_semana,es_choque_fijo,121,30,24.79,555,101,18.2,1.482,0.93,2.361,0.10011431155687422,0.0963019321643038,0.051,False,True,0.20022862311374845,1.0,False,False
+Pavimento estimado distinto de seco -> Con lesionados,pavimento_adverso,con_lesionados,102,31,30.39,574,148,25.78,1.257,0.792,1.994,0.33195502662594356,0.33106359082990083,0.0,False,True,0.6224156749236441,1.0,False,False
+Involucramiento de bicicleta -> Siniestro grave o fatal,Bicicleta,grave_o_fatal,25,3,12.0,651,44,6.76,1.881,0.542,6.53,0.40796925532665385,0.31197579200482234,0.006,False,True,0.7098126609377083,1.0,False,False
+Indicador de niebla estimada -> Con lesionados,niebla,con_lesionados,40,8,20.0,636,171,26.89,0.68,0.307,1.504,0.45966293189396745,0.3383089358610264,0.0,False,True,0.7098126609377083,1.0,False,False
+Precipitación acumulada 24h > 0 mm -> Con lesionados,lluvia_reciente_24h,con_lesionados,101,30,29.7,575,149,25.91,1.208,0.758,1.925,0.46326139767681535,0.42594573744796904,0.0,False,True,0.7098126609377083,1.0,False,False
+Hora punta (07-10 h / 17-21 h) -> Involucramiento de usuario vulnerable,en_hora_punta,usuario_vulnerable,307,79,25.73,369,86,23.31,1.14,0.802,1.621,0.4732084406251389,0.4645777073557553,0.0,False,True,0.7098126609377083,1.0,False,False
+Condición nocturna (corregida) -> Choque contra objeto/elemento fijo,noche_corr,es_choque_fijo,165,35,21.21,511,96,18.79,1.164,0.754,1.797,0.4979882171195287,0.4931550226905006,0.0,False,True,0.7114117387421839,1.0,False,False
+Fin de semana -> Siniestro grave o fatal,es_fin_de_semana,grave_o_fatal,121,10,8.26,555,37,6.67,1.261,0.609,2.612,0.5537366069206086,0.5312342823710996,0.0,False,True,0.7550953730735571,1.0,False,False
+Pavimento estimado distinto de seco -> Choque contra objeto fijo,pavimento_adverso,es_choque_fijo,102,22,21.57,574,109,18.99,1.173,0.7,1.965,0.5865212792351013,0.5436916570519701,0.0,False,True,0.7650277555240451,1.0,False,False
+Condición nocturna (corregida <= 0°) -> Con lesionados,noche_corr,con_lesionados,165,41,24.85,511,138,27.01,0.894,0.597,1.338,0.6132424434396913,0.5850173045819236,0.0,False,True,0.7665530542996141,1.0,False,False
+Ocurrencia en cruce -> Siniestro con motocicleta,es_cruce,Motociclet,565,84,14.87,111,18,16.22,0.902,0.518,1.572,0.7716441451127957,0.7166077935577853,0.0,False,True,0.9253487703957276,1.0,False,False
+Elevación solar entre 0° (excluido) y 15° -> Con lesionados,sol_bajo_encandilamiento,con_lesionados,106,29,27.36,570,150,26.32,1.055,0.662,1.68,0.8114588856812612,0.8232099292178026,0.0,False,True,0.9253487703957276,1.0,False,False
+Pavimento estimado distinto de seco -> Siniestro grave o fatal,pavimento_adverso,grave_o_fatal,102,6,5.88,574,41,7.14,0.812,0.336,1.966,0.8328138933561549,0.644647406290749,0.0,False,True,0.9253487703957276,1.0,False,False
+Desobedecer semáforo o preferencia -> Siniestro grave o fatal,causa_violacion_paso_semaforo,grave_o_fatal,15,1,6.67,661,46,6.96,0.955,0.123,7.424,1.0,0.9648722425755099,0.0,False,True,1.0,1.0,False,False
+Fin de semana (sábado/domingo) -> Con lesionados,es_fin_de_semana,con_lesionados,121,32,26.45,555,147,26.49,0.998,0.639,1.559,1.0,0.9927535163534846,0.0,False,True,1.0,1.0,False,False
+Elevación solar entre 0° (excluido) y 15° -> Atropello peatonal,sol_bajo_encandilamiento,Atropello,106,6,5.66,570,36,6.32,0.89,0.365,2.168,1.0,0.7974181149315872,0.0,False,True,1.0,1.0,False,False

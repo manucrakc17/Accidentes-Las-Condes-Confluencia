@@ -4,6 +4,16 @@
     "2025-01-02",
     "2025-12-29"
   ],
+  "desenlaces": {
+    "personas_lesionadas": 212,
+    "personas_fallecidas": 4,
+    "siniestros_con_lesionados": 179,
+    "siniestros_con_lesion_o_muerte": 181,
+    "siniestros_graves_o_fatales": 47,
+    "siniestros_con_usuarios_vulnerables": 165,
+    "graves_o_fatales_con_usuarios_vulnerables": 34
+  },
+  "coincidencia_proxy_pavimento_lluvia_24h_n": 675,
   "correccion_solar": {
     "mae_original_vs_real_grados": 60.24,
     "mae_original_vs_simulacion_mas12h_grados": 0.09,
@@ -19,26 +29,36 @@
       "noche": 48,
       "noche_cerrada": 86
     },
-    "pct_noche_original": 69.38,
+    "umbral_noche_incluye_crepusculo_grados": 0,
+    "n_noche_original": 513,
+    "n_noche_corregida": 165,
+    "pct_noche_original": 75.89,
+    "pct_noche_original_indicador_fuente": 69.38,
     "pct_noche_corregido": 24.41,
+    "siniestros_con_sol_bajo_0_15_grados": 106,
     "siniestros_en_ventana_encandilamiento_solar_0_15_grados": 106,
     "atropellos_dia_corregido": 32,
     "atropellos_total": 42
   },
   "auditoria_posicional": {
-    "registros_dentro_bbox_las_condes": 675,
-    "pct_dentro_bbox_las_condes": 99.85,
+    "fuente_limite": "CIREN, codcom 13114. Versión histórica de 2025 no documentada.",
+    "registros_dentro_limite_ciren": 649,
+    "registros_fuera_limite_ciren": 27,
+    "externos_hasta_50_m": 26,
+    "distancia_maxima_fuera_limite_m": 7842.44,
     "n_siniestros_en_intersecciones_repetidas_evaluados": 279,
-    "mediana_dispersion_misma_interseccion_m": 0.0,
-    "pct_misma_interseccion_dentro_100m": 100.0,
+    "n_intersecciones_repetidas": 99,
+    "n_intersecciones_repetidas_coordenada_unica": 99,
+    "filas_redundantes_candidatas_sin_id_fid": 7,
     "distribucion_tipo_ubicacion_vial": {
       "CRUCE_SEMAFORIZADO": 476,
-      "CRUCE_PRIORIDAD_SENAL": 81,
+      "CRUCE_PRIORIDAD_SENAL": 80,
       "TRAMO_RECTO": 73,
       "OTROS": 27,
       "CRUCE_SEMAFORO_APAGADO": 8,
       "ROTONDA_O_ENLACE": 7,
-      "INFRAESTRUCTURA_PEATON_CICLO": 4
+      "INFRAESTRUCTURA_PEATON_CICLO": 4,
+      "CRUCE_SIN_SENALIZACION": 1
     }
   },
   "recalibracion_variables": {

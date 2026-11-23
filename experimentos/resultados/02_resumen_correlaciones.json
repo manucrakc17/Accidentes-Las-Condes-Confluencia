@@ -3,223 +3,285 @@
     {
       "variable_1": "preci_prev_24h",
       "variable_2": "horas_lluvia_24h",
+      "n_pares": 676,
       "spearman_rho": 0.9991,
-      "p_spearman": 0.0,
+      "p_spearman": null,
       "pearson_r": 0.831,
-      "p_pearson": 0.0,
+      "p_pearson": 7.247272865468086e-174,
       "abs_rho": 0.9991,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": null,
+      "p_spearman_subdesborde": true,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": true
     },
     {
       "variable_1": "TOTAL_LESI",
       "variable_2": "con_lesionados",
+      "n_pares": 676,
       "spearman_rho": 0.9947,
-      "p_spearman": 0.0,
+      "p_spearman": null,
       "pearson_r": 0.8567,
-      "p_pearson": 0.0,
+      "p_pearson": 5.868321797193774e-196,
       "abs_rho": 0.9947,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": null,
+      "p_spearman_subdesborde": true,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": true
     },
     {
       "variable_1": "horas_lluvia_24h",
       "variable_2": "pavimento_adverso",
+      "n_pares": 676,
       "spearman_rho": 0.9899,
-      "p_spearman": 0.0,
+      "p_spearman": null,
       "pearson_r": 0.7388,
-      "p_pearson": 0.0,
+      "p_pearson": 1.3097540031047521e-117,
       "abs_rho": 0.9899,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": null,
+      "p_spearman_subdesborde": true,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": true
     },
     {
       "variable_1": "preci_prev_24h",
       "variable_2": "pavimento_adverso",
+      "n_pares": 676,
       "spearman_rho": 0.9899,
-      "p_spearman": 0.0,
+      "p_spearman": null,
       "pearson_r": 0.5519,
-      "p_pearson": 0.0,
+      "p_pearson": 3.879187068373264e-55,
       "abs_rho": 0.9899,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": null,
+      "p_spearman_subdesborde": true,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": true
     },
     {
       "variable_1": "TOTAL_LESI",
       "variable_2": "indice_epdo",
+      "n_pares": 676,
       "spearman_rho": 0.9778,
-      "p_spearman": 0.0,
+      "p_spearman": null,
       "pearson_r": 0.6988,
-      "p_pearson": 0.0,
+      "p_pearson": 3.643581564667749e-100,
       "abs_rho": 0.9778,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": null,
+      "p_spearman_subdesborde": true,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": true
     },
     {
       "variable_1": "con_lesionados",
       "variable_2": "indice_epdo",
+      "n_pares": 676,
       "spearman_rho": 0.9763,
-      "p_spearman": 0.0,
+      "p_spearman": null,
       "pearson_r": 0.5975,
-      "p_pearson": 0.0,
+      "p_pearson": 1.1837403232952715e-66,
       "abs_rho": 0.9763,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": null,
+      "p_spearman_subdesborde": true,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": true
     },
     {
       "variable_1": "altitud_m",
       "variable_2": "longitud",
+      "n_pares": 676,
       "spearman_rho": 0.9277,
-      "p_spearman": 0.0,
+      "p_spearman": 1.0653681462173559e-290,
       "pearson_r": 0.911,
-      "p_pearson": 0.0,
+      "p_pearson": 1.5996741976498388e-261,
       "abs_rho": 0.9277,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 6.179135248060664e-289,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "viento_kmh",
       "variable_2": "rafaga_kmh",
+      "n_pares": 676,
       "spearman_rho": 0.9186,
-      "p_spearman": 0.0,
+      "p_spearman": 4.990800855281018e-274,
       "pearson_r": 0.9166,
-      "p_pearson": 0.0,
+      "p_pearson": 1.5768030212903472e-270,
       "abs_rho": 0.9186,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 2.5328314340551165e-272,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "temp_c",
       "variable_2": "humedad_pct",
+      "n_pares": 676,
       "spearman_rho": -0.7792,
-      "p_spearman": 0.0,
+      "p_spearman": 6.738540900288306e-139,
       "pearson_r": -0.7672,
-      "p_pearson": 0.0,
+      "p_pearson": 3.971870126203914e-132,
       "abs_rho": 0.7792,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 3.039830672796725e-137,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "sol_alt_grados_corr",
       "variable_2": "noche_corr",
+      "n_pares": 676,
       "spearman_rho": -0.744,
-      "p_spearman": 0.0,
+      "p_spearman": 3.966384744858822e-120,
       "pearson_r": -0.7884,
-      "p_pearson": 0.0,
+      "p_pearson": 2.4408147734828486e-144,
       "abs_rho": 0.744,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 1.6103522064126818e-118,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "Motociclet",
       "variable_2": "usuario_vulnerable",
+      "n_pares": 676,
       "spearman_rho": 0.7418,
-      "p_spearman": 0.0,
+      "p_spearman": 4.375400434409448e-119,
       "pearson_r": 0.7418,
-      "p_pearson": 0.0,
+      "p_pearson": 4.375400434410663e-119,
       "abs_rho": 0.7418,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 1.6149205239729414e-117,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "altitud_m",
       "variable_2": "Latitud",
+      "n_pares": 676,
       "spearman_rho": 0.7278,
-      "p_spearman": 0.0,
+      "p_spearman": 1.575830068388881e-112,
       "pearson_r": 0.651,
-      "p_pearson": 0.0,
+      "p_pearson": 9.790623689630281e-83,
       "abs_rho": 0.7278,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 5.331558398049048e-111,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "temp_c",
       "variable_2": "rafaga_kmh",
+      "n_pares": 676,
       "spearman_rho": 0.648,
-      "p_spearman": 0.0,
+      "p_spearman": 9.490058526747722e-82,
       "pearson_r": 0.6754,
-      "p_pearson": 0.0,
+      "p_pearson": 3.3308809135865206e-91,
       "abs_rho": 0.648,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 2.963818278353519e-80,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "temp_c",
       "variable_2": "viento_kmh",
+      "n_pares": 676,
       "spearman_rho": 0.5804,
-      "p_spearman": 0.0,
+      "p_spearman": 4.065820865041594e-62,
       "pearson_r": 0.6306,
-      "p_pearson": 0.0,
+      "p_pearson": 3.103811065396996e-76,
       "abs_rho": 0.5804,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 1.1790880508620623e-60,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "grave_o_fatal",
       "variable_2": "indice_epdo",
+      "n_pares": 676,
       "spearman_rho": 0.5666,
-      "p_spearman": 0.0,
+      "p_spearman": 1.171336819669613e-58,
       "pearson_r": 0.8569,
-      "p_pearson": 0.0,
+      "p_pearson": 3.824438492062615e-196,
       "abs_rho": 0.5666,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 3.1704183252390854e-57,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "sol_alt_grados_corr",
       "variable_2": "temp_c",
+      "n_pares": 676,
       "spearman_rho": 0.5283,
-      "p_spearman": 0.0,
+      "p_spearman": 7.402603981753382e-50,
       "pearson_r": 0.5163,
-      "p_pearson": 0.0,
+      "p_pearson": 2.5152659988178256e-47,
       "abs_rho": 0.5283,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 1.8784107603699205e-48,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "sol_alt_grados_corr",
       "variable_2": "rafaga_kmh",
+      "n_pares": 676,
       "spearman_rho": 0.5237,
-      "p_spearman": 0.0,
+      "p_spearman": 7.068678352165029e-49,
       "pearson_r": 0.5079,
-      "p_pearson": 0.0,
+      "p_pearson": 1.2845426293526858e-45,
       "abs_rho": 0.5237,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 1.6881667123405893e-47,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "sol_alt_grados_corr",
       "variable_2": "humedad_pct",
+      "n_pares": 676,
       "spearman_rho": -0.4823,
-      "p_spearman": 0.0,
+      "p_spearman": 1.1385645798716708e-40,
       "pearson_r": -0.4957,
-      "p_pearson": 0.0,
+      "p_pearson": 3.3784141361665902e-43,
       "abs_rho": 0.4823,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 2.568095663488324e-39,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "humedad_pct",
       "variable_2": "rafaga_kmh",
+      "n_pares": 676,
       "spearman_rho": -0.4774,
-      "p_spearman": 0.0,
+      "p_spearman": 8.840505464841216e-40,
       "pearson_r": -0.4885,
-      "p_pearson": 0.0,
+      "p_pearson": 7.875215537437914e-42,
       "abs_rho": 0.4774,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 1.8890764309081757e-38,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     },
     {
       "variable_1": "longitud",
       "variable_2": "Latitud",
+      "n_pares": 676,
       "spearman_rho": 0.47,
-      "p_spearman": 0.0,
+      "p_spearman": 1.9113272623887732e-38,
       "pearson_r": 0.4931,
-      "p_pearson": 0.0,
+      "p_pearson": 1.0420885645924933e-42,
       "abs_rho": 0.47,
-      "q_fdr_bh": 0.0
+      "q_fdr_bh": 3.8799943426492094e-37,
+      "p_spearman_subdesborde": false,
+      "p_pearson_subdesborde": false,
+      "q_fdr_bh_subdesborde": false
     }
   ],
   "asociaciones_significativas_p05": [
-    {
-      "hipotesis": "Atropello a peatón -> Siniestro con lesionados",
-      "factor_exposicion": "Atropello",
-      "variable_respuesta": "con_lesionados",
-      "n_expuestos": 42,
-      "eventos_en_expuestos": 37,
-      "pct_evento_expuestos": 88.1,
-      "n_no_expuestos": 634,
-      "eventos_en_no_expuestos": 142,
-      "pct_evento_no_expuestos": 22.4,
-      "odds_ratio": 25.639,
-      "ic95_inf": 9.892,
-      "ic95_sup": 66.453,
-      "p_fisher": 0.0,
-      "p_chi2": 0.0,
-      "v_cramer": 0.358,
-      "significativo_p05": true
-    },
     {
       "hipotesis": "Cualquier usuario vulnerable (peatón/moto/bici) -> Siniestro con lesionados",
       "factor_exposicion": "usuario_vulnerable",
@@ -233,10 +295,38 @@
       "odds_ratio": 7.174,
       "ic95_inf": 4.865,
       "ic95_sup": 10.581,
-      "p_fisher": 0.0,
-      "p_chi2": 0.0,
+      "p_fisher": 4.004446063675781e-24,
+      "p_chi2": 2.524194768174816e-26,
       "v_cramer": 0.407,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 1.2013338191027343e-22,
+      "p_holm": 1.2013338191027343e-22,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
+    },
+    {
+      "hipotesis": "Atropello a peatón -> Siniestro con lesionados",
+      "factor_exposicion": "Atropello",
+      "variable_respuesta": "con_lesionados",
+      "n_expuestos": 42,
+      "eventos_en_expuestos": 37,
+      "pct_evento_expuestos": 88.1,
+      "n_no_expuestos": 634,
+      "eventos_en_no_expuestos": 142,
+      "pct_evento_no_expuestos": 22.4,
+      "odds_ratio": 25.639,
+      "ic95_inf": 9.892,
+      "ic95_sup": 66.453,
+      "p_fisher": 5.540562692962254e-18,
+      "p_chi2": 9.171809842919319e-21,
+      "v_cramer": 0.358,
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 8.310844039443381e-17,
+      "p_holm": 1.6067631809590536e-16,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Usuario vulnerable (peatón/moto/bici) -> Siniestro grave o fatal",
@@ -251,10 +341,15 @@
       "odds_ratio": 9.942,
       "ic95_inf": 5.1,
       "ic95_sup": 19.381,
-      "p_fisher": 0.0,
-      "p_chi2": 0.0,
+      "p_fisher": 6.993608199087352e-13,
+      "p_chi2": 2.1770460681490263e-15,
       "v_cramer": 0.303,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 6.993608199087351e-12,
+      "p_holm": 1.9582102957444586e-11,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Atropello a peatón -> Siniestro grave o fatal",
@@ -269,10 +364,15 @@
       "odds_ratio": 7.911,
       "ic95_inf": 3.775,
       "ic95_sup": 16.578,
-      "p_fisher": 1e-06,
-      "p_chi2": 0.0,
+      "p_fisher": 9.679441985350852e-07,
+      "p_chi2": 2.712151537995876e-10,
       "v_cramer": 0.24,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 7.259581489013139e-06,
+      "p_holm": 2.61344933604473e-05,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Involucramiento de motocicleta -> Siniestro grave o fatal",
@@ -287,10 +387,15 @@
       "odds_ratio": 4.941,
       "ic95_inf": 2.65,
       "ic95_sup": 9.214,
-      "p_fisher": 2e-06,
-      "p_chi2": 0.0,
+      "p_fisher": 2.043907605396899e-06,
+      "p_chi2": 4.9447451998304185e-08,
       "v_cramer": 0.206,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 1.2263445632381393e-05,
+      "p_holm": 5.314159774031937e-05,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Involucramiento de motocicleta -> Siniestro con lesionados",
@@ -305,10 +410,15 @@
       "odds_ratio": 2.724,
       "ic95_inf": 1.762,
       "ic95_sup": 4.21,
-      "p_fisher": 9e-06,
-      "p_chi2": 4e-06,
+      "p_fisher": 9.451675347888491e-06,
+      "p_chi2": 3.746322704735077e-06,
       "v_cramer": 0.174,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 4.725837673944245e-05,
+      "p_holm": 0.00023629188369721227,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Involucramiento de bicicleta -> Siniestro con lesionados",
@@ -323,10 +433,15 @@
       "odds_ratio": 5.322,
       "ic95_inf": 2.308,
       "ic95_sup": 12.276,
-      "p_fisher": 6.6e-05,
-      "p_chi2": 1.5e-05,
+      "p_fisher": 6.596029481032768e-05,
+      "p_chi2": 1.4724319864896146e-05,
       "v_cramer": 0.162,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.0002826869777585472,
+      "p_holm": 0.0015830470754478643,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Causa específica (maniobra/semáforo/alcohol/peatón vs 'no atento') -> Con lesionados",
@@ -341,10 +456,15 @@
       "odds_ratio": 2.436,
       "ic95_inf": 1.541,
       "ic95_sup": 3.852,
-      "p_fisher": 0.000183,
-      "p_chi2": 9.9e-05,
+      "p_fisher": 0.00018265642536049927,
+      "p_chi2": 9.935126524250688e-05,
       "v_cramer": 0.145,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.0006849615951018723,
+      "p_holm": 0.004201097783291483,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Desobedecer semáforo o preferencia de paso -> Con lesionados",
@@ -359,13 +479,18 @@
       "odds_ratio": 5.822,
       "ic95_inf": 1.962,
       "ic95_sup": 17.277,
-      "p_fisher": 0.001139,
-      "p_chi2": 0.000361,
+      "p_fisher": 0.001139441659009536,
+      "p_chi2": 0.0003605625503187894,
       "v_cramer": 0.132,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.00379813886336512,
+      "p_holm": 0.02506771649820979,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
-      "hipotesis": "Ocurrencia en cruce (semaforizado o con señal) -> Con lesionados",
+      "hipotesis": "Ocurrencia en cruce registrado -> Con lesionados",
       "factor_exposicion": "es_cruce",
       "variable_respuesta": "con_lesionados",
       "n_expuestos": 565,
@@ -377,10 +502,15 @@
       "odds_ratio": 0.501,
       "ic95_inf": 0.327,
       "ic95_sup": 0.769,
-      "p_fisher": 0.002101,
-      "p_chi2": 0.001365,
+      "p_fisher": 0.0021008638501495225,
+      "p_chi2": 0.0013646925727840765,
       "v_cramer": 0.117,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.0063025915504485676,
+      "p_holm": 0.044118140853139975,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": true
     },
     {
       "hipotesis": "Zona alta precordillerana (>= 750 m s.n.m.) -> Siniestro grave o fatal",
@@ -395,10 +525,15 @@
       "odds_ratio": 2.868,
       "ic95_inf": 1.448,
       "ic95_sup": 5.681,
-      "p_fisher": 0.004994,
-      "p_chi2": 0.001695,
+      "p_fisher": 0.00499352193420571,
+      "p_chi2": 0.0016954237541661713,
       "v_cramer": 0.115,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.013618696184197391,
+      "p_holm": 0.0998704386841142,
+      "significativo_fdr_bh_05": true,
+      "significativo_holm_05": false
     },
     {
       "hipotesis": "Zona alta precordillerana (>= 750 m s.n.m.) -> Con lesionados",
@@ -413,10 +548,15 @@
       "odds_ratio": 1.749,
       "ic95_inf": 1.089,
       "ic95_sup": 2.81,
-      "p_fisher": 0.026316,
-      "p_chi2": 0.019638,
+      "p_fisher": 0.026315793508546945,
+      "p_chi2": 0.019637552445967654,
       "v_cramer": 0.081,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.06578948377136735,
+      "p_holm": 0.500000076662392,
+      "significativo_fdr_bh_05": false,
+      "significativo_holm_05": false
     },
     {
       "hipotesis": "Causa específica distinta a 'no atento' -> Siniestro grave o fatal",
@@ -431,129 +571,367 @@
       "odds_ratio": 2.127,
       "ic95_inf": 1.04,
       "ic95_sup": 4.35,
-      "p_fisher": 0.044214,
-      "p_chi2": 0.034771,
+      "p_fisher": 0.044213651924484405,
+      "p_chi2": 0.03477050773273974,
       "v_cramer": 0.072,
-      "significativo_p05": true
+      "significativo_p05": true,
+      "estimable": true,
+      "q_fdr_bh": 0.10203150444111786,
+      "p_holm": 0.7958457346407193,
+      "significativo_fdr_bh_05": false,
+      "significativo_holm_05": false
     }
   ],
+  "resumen_asociaciones": {
+    "pruebas": 30,
+    "estimables": 30,
+    "significativas_p05": 13,
+    "significativas_fdr_bh_05": 11,
+    "significativas_holm_05": 10
+  },
   "modelo_logistico_con_lesionados": {
+    "n_siniestros": 676,
+    "n_eventos": 179,
+    "n_predictores": 9,
+    "convergio": true,
     "pseudo_r2_mcfadden": 0.2018,
-    "llr_pvalue": 2.2480020078591224e-29,
+    "llr_pvalue": 2.2480020078591233e-29,
     "factores": {
       "Atropello": {
         "odds_ratio_ajustado": 37.995,
         "ic95_inf": 14.23,
         "ic95_sup": 101.45,
-        "p_valor": 0.0
+        "p_valor": 3.8965169681239234e-13,
+        "q_fdr_bh": 3.5068652713115315e-12,
+        "p_holm": 3.506865271311531e-12
       },
       "Motociclet": {
         "odds_ratio_ajustado": 4.323,
         "ic95_inf": 2.669,
         "ic95_sup": 7.001,
-        "p_valor": 0.0
+        "p_valor": 2.668438203012671e-09,
+        "q_fdr_bh": 1.200797191355702e-08,
+        "p_holm": 2.1347505624101368e-08
       },
       "Bicicleta": {
         "odds_ratio_ajustado": 9.805,
         "ic95_inf": 4.087,
         "ic95_sup": 23.524,
-        "p_valor": 0.0
+        "p_valor": 3.1721665345538065e-07,
+        "q_fdr_bh": 9.516499603661419e-07,
+        "p_holm": 2.2205165741876647e-06
       },
       "causa_distinta_no_atento": {
         "odds_ratio_ajustado": 2.426,
         "ic95_inf": 1.426,
         "ic95_sup": 4.127,
-        "p_valor": 0.001073
+        "p_valor": 0.0010732974917508954,
+        "q_fdr_bh": 0.002414919356439515,
+        "p_holm": 0.006439784950505373
       },
       "noche_corr": {
         "odds_ratio_ajustado": 0.952,
         "ic95_inf": 0.593,
         "ic95_sup": 1.53,
-        "p_valor": 0.840447
+        "p_valor": 0.8404467647140684,
+        "q_fdr_bh": 0.8404467647140684,
+        "p_holm": 1.0
       },
       "pavimento_adverso": {
         "odds_ratio_ajustado": 1.495,
         "ic95_inf": 0.855,
         "ic95_sup": 2.613,
-        "p_valor": 0.158622
+        "p_valor": 0.15862162259083123,
+        "q_fdr_bh": 0.20394208618821158,
+        "p_holm": 0.4758648677724937
       },
       "es_cruce": {
         "odds_ratio_ajustado": 0.525,
         "ic95_inf": 0.317,
         "ic95_sup": 0.869,
-        "p_valor": 0.012179
+        "p_valor": 0.012178549736895937,
+        "q_fdr_bh": 0.018267824605343905,
+        "p_holm": 0.04871419894758375
       },
       "zona_alta_precordillera": {
         "odds_ratio_ajustado": 2.116,
         "ic95_inf": 1.222,
         "ic95_sup": 3.664,
-        "p_valor": 0.007433
+        "p_valor": 0.007432852863074117,
+        "q_fdr_bh": 0.01337913515353341,
+        "p_holm": 0.037164264315370586
       },
       "es_fin_de_semana": {
         "odds_ratio_ajustado": 1.095,
         "ic95_inf": 0.656,
         "ic95_sup": 1.828,
-        "p_valor": 0.729476
+        "p_valor": 0.7294763060273365,
+        "q_fdr_bh": 0.8206608442807536,
+        "p_holm": 1.0
       }
     }
   },
   "modelo_logistico_grave_o_fatal": {
+    "n_siniestros": 676,
+    "n_eventos": 47,
+    "n_predictores": 9,
+    "convergio": true,
     "pseudo_r2_mcfadden": 0.2287,
-    "llr_pvalue": 3.9602743640880515e-13,
+    "llr_pvalue": 3.960274364087952e-13,
     "factores": {
       "Atropello": {
         "odds_ratio_ajustado": 16.639,
         "ic95_inf": 6.697,
         "ic95_sup": 41.341,
-        "p_valor": 0.0
+        "p_valor": 1.4019708128261936e-09,
+        "q_fdr_bh": 1.2617737315435743e-08,
+        "p_holm": 1.2617737315435743e-08
       },
       "Motociclet": {
         "odds_ratio_ajustado": 9.898,
         "ic95_inf": 4.636,
         "ic95_sup": 21.131,
-        "p_valor": 0.0
+        "p_valor": 3.137746878602165e-09,
+        "q_fdr_bh": 1.4119860953709742e-08,
+        "p_holm": 2.510197502881732e-08
       },
       "Bicicleta": {
         "odds_ratio_ajustado": 5.616,
         "ic95_inf": 1.412,
         "ic95_sup": 22.343,
-        "p_valor": 0.014317
+        "p_valor": 0.014316822189580743,
+        "q_fdr_bh": 0.03221284992655667,
+        "p_holm": 0.08590093313748445
       },
       "causa_distinta_no_atento": {
         "odds_ratio_ajustado": 1.913,
         "ic95_inf": 0.846,
         "ic95_sup": 4.325,
-        "p_valor": 0.119313
+        "p_valor": 0.11931332738516015,
+        "q_fdr_bh": 0.17896999107774023,
+        "p_holm": 0.4772533095406406
       },
       "noche_corr": {
         "odds_ratio_ajustado": 2.172,
         "ic95_inf": 1.067,
         "ic95_sup": 4.42,
-        "p_valor": 0.032371
+        "p_valor": 0.032370966981269865,
+        "q_fdr_bh": 0.05826774056628575,
+        "p_holm": 0.16185483490634933
       },
       "pavimento_adverso": {
         "odds_ratio_ajustado": 0.666,
         "ic95_inf": 0.242,
         "ic95_sup": 1.833,
-        "p_valor": 0.431495
+        "p_valor": 0.4314950425462283,
+        "q_fdr_bh": 0.49787724098211394,
+        "p_holm": 1.0
       },
       "es_cruce": {
         "odds_ratio_ajustado": 0.76,
         "ic95_inf": 0.336,
         "ic95_sup": 1.72,
-        "p_valor": 0.510737
+        "p_valor": 0.510737118760742,
+        "q_fdr_bh": 0.510737118760742,
+        "p_holm": 1.0
       },
       "zona_alta_precordillera": {
         "odds_ratio_ajustado": 4.366,
         "ic95_inf": 1.939,
         "ic95_sup": 9.828,
-        "p_valor": 0.000371
+        "p_valor": 0.00037130767059246754,
+        "q_fdr_bh": 0.0011139230117774028,
+        "p_holm": 0.002599153694147273
       },
       "es_fin_de_semana": {
         "odds_ratio_ajustado": 1.391,
         "ic95_inf": 0.599,
         "ic95_sup": 3.228,
-        "p_valor": 0.442558
+        "p_valor": 0.4425575475396568,
+        "q_fdr_bh": 0.49787724098211394,
+        "p_holm": 1.0
+      }
+    }
+  },
+  "sensibilidad_modelo_grave_o_fatal": {
+    "con_hora_ciclica": {
+      "n_siniestros": 676,
+      "n_eventos": 47,
+      "n_predictores": 11,
+      "convergio": true,
+      "pseudo_r2_mcfadden": 0.2392,
+      "llr_pvalue": 7.104445417338878e-13,
+      "factores": {
+        "Atropello": {
+          "odds_ratio_ajustado": 15.641,
+          "ic95_inf": 6.173,
+          "ic95_sup": 39.633,
+          "p_valor": 6.7590144061547564e-09,
+          "q_fdr_bh": 3.717457923385116e-08,
+          "p_holm": 6.759014406154756e-08
+        },
+        "Motociclet": {
+          "odds_ratio_ajustado": 11.245,
+          "ic95_inf": 5.154,
+          "ic95_sup": 24.534,
+          "p_valor": 1.2041330655142848e-09,
+          "q_fdr_bh": 1.3245463720657133e-08,
+          "p_holm": 1.3245463720657133e-08
+        },
+        "Bicicleta": {
+          "odds_ratio_ajustado": 5.771,
+          "ic95_inf": 1.435,
+          "ic95_sup": 23.205,
+          "p_valor": 0.013560685427624272,
+          "q_fdr_bh": 0.037291884925966745,
+          "p_holm": 0.10848548342099418
+        },
+        "causa_distinta_no_atento": {
+          "odds_ratio_ajustado": 1.96,
+          "ic95_inf": 0.855,
+          "ic95_sup": 4.495,
+          "p_valor": 0.1118580128950771,
+          "q_fdr_bh": 0.205673852005009,
+          "p_holm": 0.7830060902655397
+        },
+        "noche_corr": {
+          "odds_ratio_ajustado": 2.591,
+          "ic95_inf": 0.795,
+          "ic95_sup": 8.447,
+          "p_valor": 0.1142306143881704,
+          "q_fdr_bh": 0.205673852005009,
+          "p_holm": 0.7830060902655397
+        },
+        "pavimento_adverso": {
+          "odds_ratio_ajustado": 0.643,
+          "ic95_inf": 0.228,
+          "ic95_sup": 1.814,
+          "p_valor": 0.40428890745754165,
+          "q_fdr_bh": 0.49413088689255086,
+          "p_holm": 1.0
+        },
+        "es_cruce": {
+          "odds_ratio_ajustado": 0.735,
+          "ic95_inf": 0.324,
+          "ic95_sup": 1.668,
+          "p_valor": 0.46115910911095137,
+          "q_fdr_bh": 0.5072750200220465,
+          "p_holm": 1.0
+        },
+        "zona_alta_precordillera": {
+          "odds_ratio_ajustado": 4.219,
+          "ic95_inf": 1.847,
+          "ic95_sup": 9.638,
+          "p_valor": 0.0006351362311120956,
+          "q_fdr_bh": 0.0023288328474110175,
+          "p_holm": 0.00571622608000886
+        },
+        "es_fin_de_semana": {
+          "odds_ratio_ajustado": 1.437,
+          "ic95_inf": 0.62,
+          "ic95_sup": 3.334,
+          "p_valor": 0.3980744638929009,
+          "q_fdr_bh": 0.49413088689255086,
+          "p_holm": 1.0
+        },
+        "hora_seno": {
+          "odds_ratio_ajustado": 1.545,
+          "ic95_inf": 0.879,
+          "ic95_sup": 2.719,
+          "p_valor": 0.1308833603668239,
+          "q_fdr_bh": 0.205673852005009,
+          "p_holm": 0.7830060902655397
+        },
+        "hora_coseno": {
+          "odds_ratio_ajustado": 0.879,
+          "ic95_inf": 0.354,
+          "ic95_sup": 2.182,
+          "p_valor": 0.7816598231747981,
+          "q_fdr_bh": 0.7816598231747981,
+          "p_holm": 1.0
+        }
+      }
+    },
+    "con_altitud_continua": {
+      "n_siniestros": 676,
+      "n_eventos": 47,
+      "n_predictores": 9,
+      "convergio": true,
+      "pseudo_r2_mcfadden": 0.2109,
+      "llr_pvalue": 6.284438060858814e-12,
+      "factores": {
+        "Atropello": {
+          "odds_ratio_ajustado": 14.76,
+          "ic95_inf": 6.092,
+          "ic95_sup": 35.761,
+          "p_valor": 2.4942864330770743e-09,
+          "q_fdr_bh": 1.674537280616588e-08,
+          "p_holm": 2.244857789769367e-08
+        },
+        "Motociclet": {
+          "odds_ratio_ajustado": 9.574,
+          "ic95_inf": 4.518,
+          "ic95_sup": 20.289,
+          "p_valor": 3.7211939569257505e-09,
+          "q_fdr_bh": 1.674537280616588e-08,
+          "p_holm": 2.9769551655406004e-08
+        },
+        "Bicicleta": {
+          "odds_ratio_ajustado": 5.466,
+          "ic95_inf": 1.384,
+          "ic95_sup": 21.582,
+          "p_valor": 0.01533965217835,
+          "q_fdr_bh": 0.03644660298165303,
+          "p_holm": 0.10737756524845
+        },
+        "causa_distinta_no_atento": {
+          "odds_ratio_ajustado": 2.151,
+          "ic95_inf": 0.957,
+          "ic95_sup": 4.833,
+          "p_valor": 0.06371661704034641,
+          "q_fdr_bh": 0.09557492556051962,
+          "p_holm": 0.25486646816138564
+        },
+        "noche_corr": {
+          "odds_ratio_ajustado": 2.1,
+          "ic95_inf": 1.034,
+          "ic95_sup": 4.264,
+          "p_valor": 0.04009171927072659,
+          "q_fdr_bh": 0.07216509468730786,
+          "p_holm": 0.20045859635363295
+        },
+        "pavimento_adverso": {
+          "odds_ratio_ajustado": 0.762,
+          "ic95_inf": 0.286,
+          "ic95_sup": 2.035,
+          "p_valor": 0.5879776408340436,
+          "q_fdr_bh": 0.5879776408340436,
+          "p_holm": 1.0
+        },
+        "es_cruce": {
+          "odds_ratio_ajustado": 0.732,
+          "ic95_inf": 0.326,
+          "ic95_sup": 1.642,
+          "p_valor": 0.4488413999080212,
+          "q_fdr_bh": 0.5770817998817415,
+          "p_holm": 1.0
+        },
+        "es_fin_de_semana": {
+          "odds_ratio_ajustado": 1.274,
+          "ic95_inf": 0.554,
+          "ic95_sup": 2.931,
+          "p_valor": 0.5689428417430946,
+          "q_fdr_bh": 0.5879776408340436,
+          "p_holm": 1.0
+        },
+        "altitud_por_50m": {
+          "odds_ratio_ajustado": 1.372,
+          "ic95_inf": 1.06,
+          "ic95_sup": 1.776,
+          "p_valor": 0.016198490214068013,
+          "q_fdr_bh": 0.03644660298165303,
+          "p_holm": 0.10737756524845
+        }
       }
     }
   },

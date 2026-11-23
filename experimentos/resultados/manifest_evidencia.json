@@ -1,68 +1,80 @@
 {
-  "generado_utc": "2026-11-03T15:47:01Z",
+  "version_manifiesto": 1,
   "python_version": "3.12.16",
-  "plataforma": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
-  "total_archivos_evidencia": 17,
+  "plataforma": "Linux-aarch64",
+  "dependencias": {
+    "matplotlib": "3.11.2",
+    "numpy": "2.4.6",
+    "openpyxl": "3.1.5",
+    "pandas": "3.1.1",
+    "pyproj": "3.7.2",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.17.1",
+    "seaborn": "0.13.2",
+    "shapely": "2.2.0",
+    "statsmodels": "0.15.0",
+    "tzdata": "2026.6"
+  },
+  "sha256_insumos": {
+    "planilla_local": "649287b8b00292683c93e14932da0bacbaad5d68c516dd46bffa0765c744a7c6",
+    "limite_ciren": "d7133c87f8ac74d54bf1089ded59eb3f58def624cb53eb7a8d14cb4a916a1987"
+  },
+  "total_archivos_evidencia": 16,
   "archivos": [
     {
       "archivo": "experimentos/resultados/01_auditoria_calidad_y_solar.json",
-      "bytes": 2127,
-      "sha256": "2a11a5595ad5ed7c18a3ad9b0a9ec1038505e554a0dc6a09a578adb56c9bd7d1"
+      "bytes": 2931,
+      "sha256": "7a8607065a0ec9218d16c7c8e4664130fd25d6053cf30f0d12d1103f6e26f25c"
     },
     {
       "archivo": "experimentos/resultados/02_asociaciones_categoricas_chi2_or.csv",
-      "bytes": 5013,
-      "sha256": "cc5c017f212952a26f28fa3a7649f863871c9c7ffdf23cb23a01009b0c1eac83"
+      "bytes": 7211,
+      "sha256": "6e7519af5dd6721e5d42aa972fdf12f4c303500ee294ac658bf274b0a1f4fe55"
     },
     {
       "archivo": "experimentos/resultados/02_correlaciones_estadisticas.csv",
-      "bytes": 29531,
-      "sha256": "7c8623521b7758dbf1383e66256d01768fad2d046ee9e0b048b0c4a5f14b7edc"
+      "bytes": 53198,
+      "sha256": "d45197d3abebd3417a169962cf99cd038534e1e6ec29d3094f2cb998399aadea"
     },
     {
       "archivo": "experimentos/resultados/02_resumen_correlaciones.json",
-      "bytes": 16779,
-      "sha256": "0650fe6a994202a8c075ac1c792a93282321a31e53e74b800e7a01c605d969c9"
+      "bytes": 30758,
+      "sha256": "58ed22382adbb99295a9e25549b4a31cef27ece03ea7c1703696167bc8ba9762"
     },
     {
       "archivo": "experimentos/resultados/03_grilla_getis_ord_gi.csv",
-      "bytes": 39458,
-      "sha256": "67ea412e34c19e0bbea9c4c5b907be616aa6efd8e4103ec48f188ed00ccbfc75"
+      "bytes": 13410,
+      "sha256": "c286c548ce4fdf8def824a8f80fecae48d565179b166d2f7262d9b92835145c7"
     },
     {
       "archivo": "experimentos/resultados/03_hotspots_dbscan.csv",
-      "bytes": 7303,
-      "sha256": "65a557e1d65932f3b6547c72479bdc061a10ec9ba4a0554d05ab79895b91b9ca"
+      "bytes": 3968,
+      "sha256": "c655c3d838fe6d1f0421acba5a35a6da4f01c74ad6533e64586400cb2029f704"
     },
     {
       "archivo": "experimentos/resultados/03_intersecciones_y_ejes_criticos.csv",
-      "bytes": 2066,
-      "sha256": "e4bb0bf5ce8e16d88cad49cacfadc29177a8bd4d4d1939b0f73841981541e76d"
+      "bytes": 4648,
+      "sha256": "ae548e7c1bf98b116c6a2d18a52f57297967fd718f86f569e0922d823298d1d9"
     },
     {
       "archivo": "experimentos/resultados/03_matriz_mitigacion_evidencia.csv",
-      "bytes": 5502,
-      "sha256": "82261dff1de2b7b60884440295368990efed07c3d922b0739afa9b16fafabf38"
+      "bytes": 4020,
+      "sha256": "19ce78f209917a21ca94572276589b5088b102532901174f2446d5eb0b0d1ce0"
     },
     {
       "archivo": "experimentos/resultados/03_sintesis_mitigacion.json",
-      "bytes": 27366,
-      "sha256": "b1870efdc615779d1781d6d3cf26c51c60f1999dc86dc8f100f636f22d78d4b2"
+      "bytes": 26021,
+      "sha256": "424fa219792fbdc3409f50a7996500601ae8577237e0d69d194b375413d9fbcb"
     },
     {
       "archivo": "experimentos/resultados/REPORTE_EXPERIMENTOS.md",
-      "bytes": 8978,
-      "sha256": "3a2161e292f38877b7e0ccbdde652ad2f0701b6521674e5715f27d88e9734b4d"
-    },
-    {
-      "archivo": "experimentos/resultados/SINIESTROS_LAS_CONDES_CORREGIDO.csv",
-      "bytes": 490459,
-      "sha256": "a5fbcba6e0c825f8f89d1c2058dc44b1a7640f54596a8bb8f7356df2554bad81"
+      "bytes": 5129,
+      "sha256": "7012bf04b926944572ae6e4e958009d7ab989e08e1074735e08410209ac32725"
     },
     {
       "archivo": "experimentos/resultados/fig01_correccion_solar_impacto.png",
-      "bytes": 319739,
-      "sha256": "1729cb9588aa5e10fb1e2a113a4329f67a9f7ae7a552200e68cf4d802b96b440"
+      "bytes": 136334,
+      "sha256": "6582914e24ab9b1b2ac46d0341efd135eb18992d40125843663831418231c89c"
     },
     {
       "archivo": "experimentos/resultados/fig02_matriz_correlaciones_spearman.png",
@@ -71,23 +83,23 @@
     },
     {
       "archivo": "experimentos/resultados/fig03_factores_riesgo_severidad_or.png",
-      "bytes": 203901,
-      "sha256": "10ec62aa54b793e5b9eb588b5b8a6d19a07e8848f317b3508dfa2cb9a890fa24"
+      "bytes": 194308,
+      "sha256": "ea12a51658d4de0a2b4ee2c785f66002b1bdd4d3e25b01d10e1a74c8c3da895b"
     },
     {
       "archivo": "experimentos/resultados/fig04_perfiles_horarios_y_vulnerables.png",
-      "bytes": 214547,
-      "sha256": "e4f1afc9cf0201a85f4558122dc0fbe2e22a050510bb40ac10f516e1c8291b75"
+      "bytes": 207659,
+      "sha256": "70b4a685427735c96a07dc07883d85483cb5a2a98f09fa1ac7f5fad8a10f994c"
     },
     {
       "archivo": "experimentos/resultados/fig05_mapa_hotspots_y_severidad.png",
-      "bytes": 461466,
-      "sha256": "af8586802880fa12c2f93a7dbc3d9dbfd29fa67c837637b68c73671a47f1a840"
+      "bytes": 114196,
+      "sha256": "156a5854a2df1f352dbd8f0ae4944d09f08a2f5da99edb01819cb9476c5d7206"
     },
     {
       "archivo": "experimentos/resultados/fig06_perfiles_clusters_criticos.png",
-      "bytes": 195825,
-      "sha256": "65b4038a88bcbc27fe2cb0ba388b143d03c31dff4bb55481a9ea57b5770e955f"
+      "bytes": 57184,
+      "sha256": "7e0872a527b5e0352e7e3addbdae1e00ee992fbb298bf133c4cc17044c72d878"
     }
   ]
 }

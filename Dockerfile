@@ -1,20 +1,17 @@
-FROM python:3.12-slim
-
-LABEL maintainer="Equipo Siniestros Las Condes - Confluencia Científica"
-LABEL description="Contenedor reproducible para desarrollo, experimentación estadística/espacial y auditoría de siniestros viales en Las Condes (2025)"
+FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    PYTHONTZPATH="" \
     MPLBACKEND=Agg \
-    TZ=America/Santiago
+    MPLCONFIGDIR=/tmp/matplotlib \
+    XDG_CACHE_HOME=/tmp/.cache \
+    PROJ_NETWORK=OFF
 
 WORKDIR /workspace
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    tzdata \
-    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
+USER 65534:65534
 CMD ["python", "desarrollo/run_all.py"]
